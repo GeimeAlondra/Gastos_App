@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">GastosApp</string>
+    <string name="default_web_client_id">886705443129-1kbci3f2k4765dv4j480a5s9r5vhu8n8.apps.googleusercontent.com</string>
+
+    <!-- Fragments -->
+    <string name="item_gasto">Gasto</string>
+    <string name="item_presupuesto">Presupuesto</string>
+    <string name="item_resumen">Resumen</string>
+    <string name="item_perfil">Perfil</string>
+
+    <!-- MainActivity -->
+    <string name="titulo">CashControl</string>
+    <string name="descripcion">CashControl te ayuda a registrar y gestionar tus gastos diarios de forma sencilla y rápida. Visualiza tus ingresos, categoriza tus gastos y descubre patrones para ahorrar más.</string>
+    <string name="btn_empezar">Empezar</string>
+    <string name="btn_registrarse">Registrarse</string>
+
+    <!-- LoginActivity -->
+    <string name="titulo_login">Inicio de sesión</string>
+    <string name="correo_login">Correo electronico</string>
+    <string name="password_login">Contraseña</string>
+    <string name="btn_login">Iniciar</string>
+    <string name="btn_login_google">Iniciar con Google</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

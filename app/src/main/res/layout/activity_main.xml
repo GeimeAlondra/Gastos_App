@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:gravity="center">
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="vertical"
+       android:gravity="center">
+
+       <ImageView
+           android:src="@drawable/dolar"
+           android:layout_width="wrap_content"
+           android:layout_height="200dp"/>
+
+       <!-- Título -->
+       <TextView
+           android:text="@string/titulo"
+           android:layout_marginTop="30dp"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:textAlignment="center"
+           android:textSize="23sp"
+           android:textStyle="bold"
+           android:layout_marginBottom="10dp"/>
+
+       <!-- Descripción -->
+       <TextView
+           android:text="@string/descripcion"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="20dp"
+           android:textAlignment="center"
+           android:textColor="@color/black"
+           android:layout_marginLeft="20dp"
+           android:layout_marginRight="20dp"
+           android:textSize="16sp"
+           android:layout_marginBottom="40dp"/>
+
+       <!-- Botones -->
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+           android:gravity="center"
+           android:layout_marginLeft="30dp"
+           android:layout_marginRight="30dp">
+
+           <!-- Empezar -->
+           <com.google.android.material.button.MaterialButton
+               android:id="@+id/btnLogin"
+               android:text="@string/btn_empezar"
+               android:layout_width="0dp"
+               android:layout_height="50dp"
+               android:layout_weight="1"
+               android:textColor="@color/black"
+               android:textStyle="bold"
+               android:layout_marginEnd="8dp"
+               android:textColorHint="@color/black"
+               android:backgroundTint="@color/light_green"
+               app:cornerRadius="12dp">
+           </com.google.android.material.button.MaterialButton>
+
+           <!-- Registrarse -->
+           <com.google.android.material.button.MaterialButton
+               android:id="@+id/btnRegistrar"
+               android:text="@string/btn_registrarse"
+               android:layout_width="0dp"
+               android:layout_height="50dp"
+               android:layout_weight="1"
+               android:textColor="@color/black"
+               android:textColorHint="@color/black"
+               android:textStyle="bold"
+               android:layout_marginStart="8dp"
+               android:backgroundTint="@color/light_green"
+               app:cornerRadius="12dp">
+           </com.google.android.material.button.MaterialButton>
+
+       </LinearLayout>
+   </LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>
+
+
