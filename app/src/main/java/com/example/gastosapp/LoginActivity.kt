@@ -2,6 +2,7 @@ package com.example.gastosapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
@@ -28,7 +29,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var refBase: DatabaseReference
     private lateinit var googleSignInClient: GoogleSignInClient
 
-    // ActivityResultLauncher moderno (reemplaza onActivityResult)
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -59,14 +59,21 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
+        // Redirigir al registro desde login
+        binding.sinCuenta.setText(Html.fromHtml(getString(R.string.sin_cuenta), Html.FROM_HTML_MODE_LEGACY))
+        binding.sinCuenta.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+        }
+
         // Referencias a los EditText
         val textCorreo = findViewById<EditText>(R.id.text_correo)
         val textPassword = findViewById<EditText>(R.id.text_password)
 
-        // Configurar Google Sign-In ANTES de usarlo
+        // Configurar Google Sign-In entes de usarlo
         configurarGoogleSignIn()
 
-        // ===== BOTÓN LOGIN NORMAL =====
+        // Login normal
         binding.btnLogin.setOnClickListener {
             val correo = textCorreo.text.toString().trim()
             val password = textPassword.text.toString().trim()
@@ -89,7 +96,7 @@ class LoginActivity : AppCompatActivity() {
                             .addOnSuccessListener { snapshot ->
                                 if (snapshot.exists()) {
                                     // Ir al Dashboard
-                                    val intent = Intent(this, InicioActivity::class.java)
+                                    val intent = Intent(this, DashboardActivity::class.java)
                                     startActivity(intent)
                                     finish()
                                 } else {
@@ -107,7 +114,7 @@ class LoginActivity : AppCompatActivity() {
                 }
         }
 
-        // ===== BOTÓN LOGIN GOOGLE =====
+        // Login con Google
         binding.btnLoginGoogle.setOnClickListener {
             Log.d("LoginActivity", "Iniciando Google Sign-In...")
             iniciarSesionConGoogle()
@@ -149,7 +156,6 @@ class LoginActivity : AppCompatActivity() {
                     val user = auth.currentUser
                     val uid = user?.uid
 
-                    // ⚠️ CAMBIO CRÍTICO: usar "usuarios" en lugar de "users"
                     val database = FirebaseDatabase.getInstance().reference.child("usuarios")
 
                     if (uid != null) {
@@ -160,7 +166,7 @@ class LoginActivity : AppCompatActivity() {
                             if (snapshot.exists()) {
                                 // El usuario ya existe
                                 Log.d("LoginActivity", "Usuario existente encontrado")
-                                startActivity(Intent(this, InicioActivity::class.java))
+                                startActivity(Intent(this, DashboardActivity::class.java))
                                 Toast.makeText(this, "Bienvenido de nuevo", Toast.LENGTH_SHORT).show()
                                 finish()
                             } else {
@@ -168,7 +174,7 @@ class LoginActivity : AppCompatActivity() {
                                 Log.d("LoginActivity", "Nuevo usuario, creando registro...")
                                 val registro = Registro(
                                     nombre = user.displayName ?: "Usuario",
-                                    email = user.email ?: ""
+                                    correo = user.email ?: ""
                                 )
 
                                 database.child(uid).setValue(registro).addOnSuccessListener {
@@ -201,7 +207,7 @@ class LoginActivity : AppCompatActivity() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             Log.d("LoginActivity", "Usuario ya autenticado: ${currentUser.uid}")
-            // Opcional: redirigir automáticamente
+            // Redirigir automáticamente
             // startActivity(Intent(this, InicioActivity::class.java))
             // finish()
         }

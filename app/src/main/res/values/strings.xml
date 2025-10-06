@@ -7,6 +7,7 @@
     <string name="item_presupuesto">Presupuesto</string>
     <string name="item_resumen">Resumen</string>
     <string name="item_perfil">Perfil</string>
+    <string name="tv_titulo">Titulos</string>
 
     <!-- MainActivity -->
     <string name="titulo">CashControl</string>
@@ -20,6 +21,14 @@
     <string name="password_login">Contraseña</string>
     <string name="btn_login">Iniciar</string>
     <string name="btn_login_google">Iniciar con Google</string>
+    <string name="sin_cuenta"><u>¿No tienes una cuenta? Registrate</u></string>
+
+    <!-- RegisterActivity -->
+    <string name="registro">Registro</string>
+    <string name="r_nombre">Nombre</string>
+    <string name="r_correo">Correo</string>
+    <string name="r_password">Contraseña</string>
+    <string name="r_r_password">Repita la contraseña</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

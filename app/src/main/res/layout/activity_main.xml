@@ -71,7 +71,7 @@
 
            <!-- Registrarse -->
            <com.google.android.material.button.MaterialButton
-               android:id="@+id/btnRegistrar"
+               android:id="@+id/btnMainRegistrar"
                android:text="@string/btn_registrarse"
                android:layout_width="0dp"
                android:layout_height="50dp"
