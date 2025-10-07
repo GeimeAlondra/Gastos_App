@@ -39,13 +39,13 @@ class MainActivity : AppCompatActivity() {
             }
             else{
                 startActivity(Intent(applicationContext, LoginActivity::class.java))
-                finish()
+//                finish()
             }
         }
 
         binding.btnMainRegistrar.setOnClickListener {
             startActivity(Intent(applicationContext, RegisterActivity::class.java))
-            finish()
+//            finish()
         }
     }
 
