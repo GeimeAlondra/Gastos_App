@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,81 +10,99 @@
     android:orientation="vertical"
     android:gravity="center">
 
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:orientation="vertical"
-       android:gravity="center">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-       <ImageView
-           android:src="@drawable/dolar"
-           android:layout_width="wrap_content"
-           android:layout_height="200dp"/>
+        <ImageView
+            android:id="@+id/imgPortada"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:src="@drawable/dolar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-       <!-- Título -->
-       <TextView
-           android:text="@string/titulo"
-           android:layout_marginTop="30dp"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:textAlignment="center"
-           android:textSize="23sp"
-           android:textStyle="bold"
-           android:layout_marginBottom="10dp"/>
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tv_CashControl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/titulo"
+            android:textAlignment="center"
+            android:textSize="23sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgPortada" />
 
-       <!-- Descripción -->
-       <TextView
-           android:text="@string/descripcion"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_marginTop="20dp"
-           android:textAlignment="center"
-           android:layout_marginLeft="20dp"
-           android:layout_marginRight="20dp"
-           android:textSize="16sp"
-           android:layout_marginBottom="40dp"/>
+        <!-- Descripción -->
+        <TextView
+            android:id="@+id/tv_DescripcionCashControl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="40dp"
+            android:text="@string/descripcion"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_CashControl" />
 
-       <!-- Botones -->
-       <LinearLayout
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:orientation="horizontal"
-           android:gravity="center"
-           android:layout_marginLeft="30dp"
-           android:layout_marginRight="30dp">
+        <!-- Botones -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_DescripcionCashControl">
 
-           <!-- Empezar -->
-           <com.google.android.material.button.MaterialButton
-               android:id="@+id/btnLogin"
-               android:text="@string/btn_empezar"
-               android:layout_width="0dp"
-               android:layout_height="50dp"
-               android:layout_weight="1"
-               android:textColor="@color/black"
-               android:textStyle="bold"
-               android:layout_marginEnd="8dp"
-               android:textColorHint="@color/black"
-               android:backgroundTint="@color/light_green"
-               app:cornerRadius="12dp">
-           </com.google.android.material.button.MaterialButton>
+            <!-- Empezar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogin"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/light_green"
+                android:text="@string/btn_empezar"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"/>
 
-           <!-- Registrarse -->
-           <com.google.android.material.button.MaterialButton
-               android:id="@+id/btnMainRegistrar"
-               android:text="@string/btn_registrarse"
-               android:layout_width="0dp"
-               android:layout_height="50dp"
-               android:layout_weight="1"
-               android:textColor="@color/black"
-               android:textColorHint="@color/black"
-               android:textStyle="bold"
-               android:layout_marginStart="8dp"
-               android:backgroundTint="@color/light_green"
-               app:cornerRadius="12dp">
-           </com.google.android.material.button.MaterialButton>
+            <!-- Registrarse -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMainRegistrar"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/light_green"
+                android:text="@string/btn_registrarse"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"/>
 
-       </LinearLayout>
-   </LinearLayout>
-</androidx.appcompat.widget.LinearLayoutCompat>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 
