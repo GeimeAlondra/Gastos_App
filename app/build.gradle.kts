@@ -59,6 +59,8 @@ dependencies {
 
     implementation("com.squareup.picasso:picasso:2.8")
 
+    implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.29")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
