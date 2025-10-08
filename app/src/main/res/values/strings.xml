@@ -3,6 +3,7 @@
     <string name="default_web_client_id">886705443129-1kbci3f2k4765dv4j480a5s9r5vhu8n8.apps.googleusercontent.com</string>
 
     <!-- Fragments -->
+    <string name="item_inicio">Inicio</string>
     <string name="item_gasto">Gasto</string>
     <string name="item_presupuesto">Presupuesto</string>
     <string name="item_resumen">Resumen</string>
