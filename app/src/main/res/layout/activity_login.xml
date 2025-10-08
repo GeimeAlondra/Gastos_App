@@ -9,6 +9,7 @@
     tools:context=".LoginActivity"
     android:orientation="vertical"
     android:gravity="center"
+    android:background="@color/cremaClaro"
     >
 
     <com.google.android.material.circularreveal.cardview.CircularRevealCardView

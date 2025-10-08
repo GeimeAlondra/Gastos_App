@@ -8,7 +8,9 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:background="@color/cremaClaro"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -23,15 +25,19 @@
         android:layout_marginEnd="20dp"
         >
 
-        <ImageView
-            android:id="@+id/imgPortada"
-            android:layout_width="wrap_content"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animationCash"
+            android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@drawable/dolar"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:clickable="true"
+            android:focusable="true"
+            app:lottie_rawRes="@raw/oink_cash"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/CardViewMain"
@@ -40,9 +46,12 @@
             android:layout_marginTop="20dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
+            android:backgroundTint="@color/blanco"
+            app:cardElevation="20dp"
+            app:cardCornerRadius="19dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imgPortada"
+            app:layout_constraintTop_toBottomOf="@id/animationCash"
             >
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -57,13 +66,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:layout_marginBottom="10dp"
-                    android:text="@string/titulo"
+                    android:text="@string/app_name"
                     android:textAlignment="center"
                     android:textSize="23sp"
                     android:textStyle="bold"
+                    android:textColor="@color/negro"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
 
                 <!-- Descripción -->
                 <TextView
@@ -75,6 +86,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:text="@string/descripcion"
+                    android:textColor="@color/negro"
                     android:textAlignment="center"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -91,11 +103,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
             android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
             android:layout_marginRight="30dp"
             android:gravity="center"
             android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/CardViewMain">
@@ -107,12 +120,12 @@
                 android:layout_height="50dp"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/light_green"
+                android:backgroundTint="@color/verdeClaro"
                 android:text="@string/btn_empezar"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:textStyle="bold"
-                app:cornerRadius="12dp"/>
+                app:cornerRadius="12dp" />
 
             <!-- Registrarse -->
             <com.google.android.material.button.MaterialButton
@@ -121,12 +134,12 @@
                 android:layout_height="50dp"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/light_green"
+                android:backgroundTint="@color/verdeClaro"
                 android:text="@string/btn_registrarse"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:textStyle="bold"
-                app:cornerRadius="12dp"/>
+                app:cornerRadius="12dp" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
