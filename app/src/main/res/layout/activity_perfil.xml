@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,83 +10,98 @@
     android:gravity="center"
     tools:context=".PerfilActivity">
 
-    <TextView
-        android:text="Perfil de usuario"
-        android:layout_marginTop="50dp"
-        android:textAlignment="center"
-        android:textStyle="bold"
-        android:textSize="25dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:layout_marginTop="30dp"
-        android:gravity="center">
+        android:layout_margin="30dp"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
-        <ImageView
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:src="@drawable/perfil"
-            android:id="@+id/imgPerfil"/>
-
-        <TextView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:hint="Alondra Lopez"
-            android:id="@+id/p_nombre"
-            />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:layout_margin="20dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="25dp"
-        android:orientation="vertical">
+            <TextView
+                android:id="@+id/title_perfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_perfilUsuario"
+                android:textAlignment="center"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/correo"
-            android:drawablePadding="15dp"
-            android:hint="alondra@gmail.com"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:layout_marginTop="12dp"
-            android:textStyle="italic"
-            android:id="@+id/p_correo"
-            />
-    </LinearLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/user_file"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal"
+                android:paddingLeft="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_perfil">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="100dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="30dp"
-        android:gravity="center">
+                <ImageView
+                    android:id="@+id/imgPerfil"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/account"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCerrarSesion"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:layout_marginEnd="8dp"
-            android:textColorHint="@color/black"
-            android:backgroundTint="@color/light_green"
-            app:cornerRadius="12dp"
-            android:drawableEnd="@drawable/exit"
-            android:text="Cerrar sesión"/>
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/p_nombre"
+                    android:layout_width="196dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/tv_userName"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imgPerfil" />
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/p_correo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:drawablePadding="15dp"
+                android:hint="@string/tv_userEmail"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:drawableStartCompat="@drawable/correo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/user_file" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCerrarSesion"
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="35dp"
+                android:backgroundTint="@color/light_green"
+                android:drawableEnd="@drawable/exit"
+                android:text="@string/tv_cerrarSesion"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/p_correo" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

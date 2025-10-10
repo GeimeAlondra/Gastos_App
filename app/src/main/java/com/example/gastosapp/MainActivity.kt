@@ -2,10 +2,14 @@ package com.example.gastosapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.airbnb.lottie.LottieAnimationView
 import com.example.gastosapp.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -13,6 +17,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var animationCash: LottieAnimationView
+    private var isAnimating = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,24 +39,46 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        setupAnimationCash()
+
         binding.btnLogin.setOnClickListener {
             if (firebaseAuth.currentUser != null){
                 irInicioActivity()
             }
             else{
                 startActivity(Intent(applicationContext, LoginActivity::class.java))
-                finish()
+//                finish()
             }
         }
 
         binding.btnMainRegistrar.setOnClickListener {
             startActivity(Intent(applicationContext, RegisterActivity::class.java))
-            finish()
+//            finish()
+        }
+
+    }
+
+    private fun setupAnimationCash() {
+        animationCash = findViewById(R.id.animationCash)
+
+        animationCash.setOnClickListener {
+//            animationCash.progress = 0f
+            if (!isAnimating) {
+                animationCash.playAnimation()
+                isAnimating = true
+
+                animationCash.isClickable = false
+                Handler(Looper.getMainLooper()).postDelayed({
+                    animationCash.isClickable = true
+                    isAnimating = false
+                }, 1000)
+            }
         }
     }
 
     private fun irInicioActivity() {
         startActivity(Intent(applicationContext, DashboardActivity::class.java))
     }
+
 }
 
