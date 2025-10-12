@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.gastosapp.Fragments.FragmentGasto
+import com.example.gastosapp.Fragments.FragmentInicio
 import com.example.gastosapp.Fragments.FragmentPerfil
 import com.example.gastosapp.Fragments.FragmentPresupuesto
 import com.example.gastosapp.Fragments.FragmentResumen
@@ -30,10 +31,15 @@ private lateinit var binding: ActivityDashboardBinding
         }
 
         // Fragmento por defecto
-        verFragmentoGasto()
+        verFragmentoInicio()
 
         binding.bottomNV.setOnItemSelectedListener { item ->
             when (item.itemId) {
+                R.id.item_inicio -> {
+                    verFragmentoInicio()
+                    true
+                }
+
                 R.id.item_gasto -> {
                     verFragmentoGasto()
                     true
@@ -60,6 +66,15 @@ private lateinit var binding: ActivityDashboardBinding
                 }
             }
         }
+    }
+
+    private fun verFragmentoInicio() {
+        binding.tvTitulo.text = "Inicio"
+
+        val fragmentInicio = FragmentInicio()
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(binding.fragmentoFl.id, fragmentInicio, "Fragment Inicio")
+        fragmentTransaction.commit()
     }
 
     private fun verFragmentoGasto() {

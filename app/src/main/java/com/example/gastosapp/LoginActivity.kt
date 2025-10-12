@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Html
 import android.util.Log
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -49,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
         // Inicialización
         auth = FirebaseAuth.getInstance()
         binding = ActivityLoginBinding.inflate(layoutInflater)
-        refBase = FirebaseDatabase.getInstance().getReference("usuarios") // ⚠️ Usar siempre "usuarios"
+        refBase = FirebaseDatabase.getInstance().getReference("usuarios")
 
         enableEdgeToEdge()
         setContentView(binding.root)
