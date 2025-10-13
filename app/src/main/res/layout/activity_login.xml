@@ -9,7 +9,8 @@
     tools:context=".LoginActivity"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/crema">
+    android:background="@color/cremaClaro"
+    >
 
     <com.google.android.material.circularreveal.cardview.CircularRevealCardView
         android:layout_width="match_parent"
@@ -32,9 +33,10 @@
                 android:layout_marginTop="20dp"
                 android:text="@string/titulo_login"
                 android:textAlignment="center"
-                android:textSize="25sp"
+                android:textSize="29sp"
                 android:textStyle="bold"
                 android:textColor="@color/negro"
+                android:textAllCaps="true"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -68,8 +70,11 @@
                     android:id="@+id/text_correo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/negro"
                     android:hint="@string/correo_login"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textEmailAddress"
+                    android:autofillHints="emailAddress"
+                    />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -85,14 +90,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/CorreoElectronico"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                android:background="@color/blanco"
                 >
 
                 <EditText
                     android:id="@+id/text_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/negro"
                     android:hint="@string/password_login"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:autofillHints="password"
+                    android:textColorHint="@color/negro"
+                    />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -100,9 +110,9 @@
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
+                android:layout_marginRight="35dp"
+                android:layout_marginLeft="35dp"
                 android:layout_marginTop="30dp"
-                android:layout_marginRight="40dp"
                 android:backgroundTint="@color/light_green"
                 android:text="@string/btn_login"
                 android:textColor="@color/black"
@@ -118,9 +128,9 @@
                 android:id="@+id/btnLoginGoogle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
+                android:layout_marginRight="35dp"
+                android:layout_marginLeft="35dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginRight="40dp"
                 android:backgroundTint="@color/light_green"
                 android:text="@string/btn_login_google"
                 android:textColor="@color/black"

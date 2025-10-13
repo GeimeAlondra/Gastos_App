@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/item_inicio"
+        android:title="@string/item_inicio"
+        android:icon="@drawable/inicio"
+        />
+
+    <item
         android:id="@+id/item_gasto"
         android:title="@string/item_gasto"
         android:icon="@drawable/gasto"

@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
         // Inicialización
         auth = FirebaseAuth.getInstance()
         binding = ActivityLoginBinding.inflate(layoutInflater)
-        refBase = FirebaseDatabase.getInstance().getReference("usuarios") // ⚠️ Usar siempre "usuarios"
+        refBase = FirebaseDatabase.getInstance().getReference("usuarios")
 
         enableEdgeToEdge()
         setContentView(binding.root)
