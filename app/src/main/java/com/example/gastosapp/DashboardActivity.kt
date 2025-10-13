@@ -56,8 +56,7 @@ private lateinit var binding: ActivityDashboardBinding
                 }
 
                 R.id.item_perfil -> {
-                    val intent = Intent(this, PerfilActivity::class.java)
-                    startActivity(intent)
+                    verFragmentoPerfil()
                     true
                 }
 

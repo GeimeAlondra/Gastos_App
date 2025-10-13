@@ -43,7 +43,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:orientation="horizontal"
-                    android:paddingLeft="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title_perfil">
@@ -59,16 +58,18 @@
 
                     <TextView
                         android:id="@+id/p_nombre"
-                        android:layout_width="196dp"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:hint="@string/tv_userName"
                         android:paddingStart="15dp"
                         android:paddingEnd="15dp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/negro"
                         android:textSize="22sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/imgPerfil" />
+                        app:layout_constraintStart_toEndOf="@+id/imgPerfil"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -78,6 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="25dp"
                     android:drawablePadding="15dp"
+                    android:paddingStart="10dp"
                     android:hint="@string/tv_userEmail"
                     android:textColor="@color/black"
                     android:textSize="16sp"
@@ -86,6 +88,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/user_file" />
+
+                <View
+                    android:id="@+id/lineaSeparadora"
+                    android:layout_alignParentBottom="true"
+                    android:background="#cccc"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="35dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/p_correo"/>
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnCerrarSesion"
@@ -100,7 +113,7 @@
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/p_correo" />
+                    app:layout_constraintTop_toBottomOf="@+id/lineaSeparadora" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
