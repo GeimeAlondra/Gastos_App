@@ -22,7 +22,7 @@ private lateinit var binding: ActivityDashboardBinding
 
         binding = ActivityDashboardBinding.inflate(layoutInflater)
 
-        enableEdgeToEdge()
+//        enableEdgeToEdge()
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
