@@ -31,6 +31,14 @@
     <string name="r_password">Contraseña</string>
     <string name="r_r_password">Repita la contraseña</string>
 
+    <!-- PresupuestoActivity -->
+    <string name="t_presupuesto">Establecer presupuesto</string>
+    <string name="st_presupuesto">Define un presupuesto para controlar tus gastos</string>
+    <string name="t_monto_presupuesto">Monto del Presupuesto ($)</string>
+    <string name="t_periodo">Periodo</string>
+    <string name="t_fecha">Fecha de inicio</string>
+    <string name="btn_presupuesto">Agregar presupuesto</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tv_perfilUsuario">Perfil de usuario</string>
