@@ -1,28 +1,21 @@
 package com.example.gastosapp.Fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.os.Handler;
+import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.gastosapp.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentPresupuesto#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FragmentPresupuesto extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -30,15 +23,6 @@ public class FragmentPresupuesto extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentPresupuesto.
-     */
-    // TODO: Rename and change types and number of parameters
     public static FragmentPresupuesto newInstance(String param1, String param2) {
         FragmentPresupuesto fragment = new FragmentPresupuesto();
         Bundle args = new Bundle();
@@ -60,7 +44,73 @@ public class FragmentPresupuesto extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_presupuesto, container, false);
+        View view = inflater.inflate(R.layout.fragment_presupuesto, container, false);
+
+        LottieAnimationView btnAddCategory = view.findViewById(R.id.agregarPresupuesto);
+
+        System.out.println("🔍 DEBUG: onCreateView ejecutado");
+        System.out.println("🔍 DEBUG: Botón encontrado: " + (btnAddCategory != null));
+
+        btnAddCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("🎯 CLICK DETECTADO: El botón SÍ está funcionando");
+
+                btnAddCategory.playAnimation();
+                System.out.println("🎬 ANIMACIÓN: Debería estar reproduciéndose");
+
+                // Método modificado para ventana flotante
+                showFloatingWindow();
+            }
+        });
+
+        return view;
+    }
+
+    private void showFloatingWindow() {
+        System.out.println("🪟 ABRIENDO: DialogFragment");
+
+        try {
+            FragmentAgregarPresupuesto dialogFragment = new FragmentAgregarPresupuesto();
+
+            // Usar el FragmentManager de la Activity, no el ChildFragmentManager
+            dialogFragment.show(getParentFragmentManager(), "presupuesto_dialog");
+
+            System.out.println("🎉 ÉXITO: Dialog abierto");
+
+        } catch (Exception e) {
+            System.out.println("💥 ERROR: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // Método para cerrar la ventana (llamado desde el fragmento hijo)
+    public void closeFloatingWindow() {
+        try {
+            System.out.println("🚪 CERRANDO: Ventana flotante");
+
+            // 1. Ocultar el contenedor
+            View containerView = getView().findViewById(R.id.child_fragment_container);
+            if (containerView != null) {
+                containerView.setVisibility(View.GONE);
+                System.out.println("✅ CONTENEDOR: Ocultado");
+            }
+
+            // 2. Remover del back stack
+            getChildFragmentManager().popBackStack();
+            System.out.println("✅ VENTANA: Cerrada correctamente");
+
+        } catch (Exception e) {
+            System.out.println("❌ ERROR al cerrar: " + e.getMessage());
+        }
+    }
+
+    // Método para cuando el usuario presiona back
+    public boolean onBackPressed() {
+        if (getChildFragmentManager().getBackStackEntryCount() > 0) {
+            closeFloatingWindow();
+            return true; // Indica que manejó el back press
+        }
+        return false; // No manejó el back press
     }
 }
