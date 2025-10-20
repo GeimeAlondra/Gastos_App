@@ -25,7 +25,7 @@ public class FragmentAgregarPresupuesto extends DialogFragment {
     private Button btnFechaInicio, btnFechaFinal;
     private TextView tvFechaInicio, tvFechaFinal;
     private Calendar calendarInicio, calendarFinal;
-    private View rootView; // ✅ Agregar esta variable
+    private View rootView;
 
     // Interface para comunicación
     public interface PresupuestoGuardadoListener {
@@ -42,7 +42,7 @@ public class FragmentAgregarPresupuesto extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_agregar_presupuesto, container, false);
-        this.rootView = view; // ✅ Guardar la referencia
+        this.rootView = view; // Guardar la referencia
 
         // Inicializar vistas
         initViews();
@@ -54,7 +54,7 @@ public class FragmentAgregarPresupuesto extends DialogFragment {
     }
 
     private void initViews() {
-        // ✅ Usar rootView en lugar de view
+        // Usar rootView en lugar de view
         etNombreGasto = rootView.findViewById(R.id.etNombreGasto);
         etCantidad = rootView.findViewById(R.id.etCantidad);
         btnFechaInicio = rootView.findViewById(R.id.btnFechaInicio);
@@ -75,10 +75,10 @@ public class FragmentAgregarPresupuesto extends DialogFragment {
         // Botón Fecha Final
         btnFechaFinal.setOnClickListener(v -> showDatePicker(false));
 
-        // ✅ CORREGIDO: Usar rootView
+        // Usar rootView
         rootView.findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarPresupuesto());
 
-        // ✅ CORREGIDO: Usar rootView
+        // Usar rootView
         rootView.findViewById(R.id.btnCancelar).setOnClickListener(v -> dismiss());
     }
 
@@ -129,10 +129,10 @@ public class FragmentAgregarPresupuesto extends DialogFragment {
     }
 
     private void guardarPresupuesto() {
-        System.out.println("🎯 DEBUG: guardarPresupuesto() INICIADO");
+        System.out.println("DEBUG: guardarPresupuesto() INICIADO");
 
         if (!validarCampos()) {
-            System.out.println("❌ DEBUG: Validación falló");
+            System.out.println("DEBUG: Validación falló");
             return;
         }
 
@@ -141,25 +141,25 @@ public class FragmentAgregarPresupuesto extends DialogFragment {
         String fechaInicio = tvFechaInicio.getText().toString();
         String fechaFinal = tvFechaFinal.getText().toString();
 
-        System.out.println("📊 DEBUG: Datos capturados:");
+        System.out.println("   DEBUG: Datos capturados:");
         System.out.println("   Nombre: " + nombre);
         System.out.println("   Cantidad: " + cantidad);
         System.out.println("   Fecha Inicio: " + fechaInicio);
         System.out.println("   Fecha Final: " + fechaFinal);
 
         Presupuesto presupuesto = new Presupuesto(nombre, cantidad, fechaInicio, fechaFinal);
-        System.out.println("📦 DEBUG: Objeto Presupuesto creado");
+        System.out.println("DEBUG: Objeto Presupuesto creado");
 
-        // ✅ VERIFICAR SI EL LISTENER ESTÁ CONFIGURADO
+        // VERIFICAR SI EL LISTENER ESTÁ CONFIGURADO
         if (listener != null) {
-            System.out.println("✅ DEBUG: Listener NO es null - llamando onPresupuestoGuardado");
+            System.out.println("DEBUG: Listener NO es null - llamando onPresupuestoGuardado");
             listener.onPresupuestoGuardado(presupuesto);
         } else {
-            System.out.println("❌ DEBUG: Listener ES null - NO se llamará onPresupuestoGuardado");
+            System.out.println("DEBUG: Listener ES null - NO se llamará onPresupuestoGuardado");
             Toast.makeText(requireContext(), "Error: Listener no configurado", Toast.LENGTH_LONG).show();
         }
 
-        System.out.println("🏁 DEBUG: guardarPresupuesto() FINALIZADO");
+        System.out.println("DEBUG: guardarPresupuesto() FINALIZADO");
         dismiss();
         Toast.makeText(requireContext(), "Presupuesto guardado!", Toast.LENGTH_SHORT).show();
     }

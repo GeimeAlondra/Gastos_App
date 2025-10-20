@@ -17,7 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.gastosapp.Models.Presupuesto;
 import com.example.gastosapp.R;
-import com.example.gastosapp.viewModels.PresupuestoViewModel; // ✅ IMPORT CORREGIDO
+import com.example.gastosapp.viewModels.PresupuestoViewModel;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class FragmentPresupuesto extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    // ✅ VARIABLE CORREGIDA: PresupuestoViewModel (con P mayúscula)
+    // VARIABLE CORREGIDA: PresupuestoViewModel (con P mayúscula)
     private PresupuestoViewModel viewModel;
     private LinearLayout containerPresupuestos;
 
@@ -53,9 +53,9 @@ public class FragmentPresupuesto extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // ✅ INICIALIZACIÓN CORREGIDA
+        // INICIALIZACIÓN CORREGIDA
         viewModel = new ViewModelProvider(this).get(PresupuestoViewModel.class);
-        System.out.println("✅ ViewModel inicializado");
+        System.out.println("ViewModel inicializado");
     }
 
     @Override
@@ -67,13 +67,13 @@ public class FragmentPresupuesto extends Fragment {
         containerPresupuestos = view.findViewById(R.id.containerPresupuestos);
         LottieAnimationView btnAddCategory = view.findViewById(R.id.agregarPresupuesto);
 
-        System.out.println("🔍 Vistas inicializadas");
+        System.out.println("Vistas inicializadas");
 
         // Configurar Observer para los presupuestos
         viewModel.getPresupuestos().observe(getViewLifecycleOwner(), new Observer<List<Presupuesto>>() {
             @Override
             public void onChanged(List<Presupuesto> presupuestos) {
-                System.out.println("👀 Observer ejecutado - " + presupuestos.size() + " presupuestos");
+                System.out.println("Observer ejecutado - " + presupuestos.size() + " presupuestos");
                 actualizarVistaPresupuestos(presupuestos);
             }
         });
@@ -82,7 +82,7 @@ public class FragmentPresupuesto extends Fragment {
         btnAddCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("🎯 Botón presionado");
+                System.out.println("Botón presionado");
                 btnAddCategory.playAnimation();
 
                 new Handler().postDelayed(new Runnable() {
@@ -98,7 +98,7 @@ public class FragmentPresupuesto extends Fragment {
     }
 
     private void actualizarVistaPresupuestos(List<Presupuesto> presupuestos) {
-        System.out.println("🎨 Actualizando vista con " + presupuestos.size() + " presupuestos");
+        System.out.println("Actualizando vista con " + presupuestos.size() + " presupuestos");
 
         // Limpiar el contenedor
         containerPresupuestos.removeAllViews();
@@ -106,14 +106,14 @@ public class FragmentPresupuesto extends Fragment {
         if (presupuestos.isEmpty()) {
             // Mostrar estado vacío
             TextView tvEmpty = new TextView(requireContext());
-            tvEmpty.setText("No hay presupuestos. ¡Agrega uno nuevo! 📝");
+            tvEmpty.setText("No hay presupuestos. ¡Agrega uno nuevo! ");
             tvEmpty.setTextSize(16);
             tvEmpty.setGravity(View.TEXT_ALIGNMENT_CENTER);
             tvEmpty.setPadding(0, 50, 0, 50);
             tvEmpty.setTextColor(getResources().getColor(android.R.color.darker_gray));
             containerPresupuestos.addView(tvEmpty);
 
-            System.out.println("📭 Mostrando estado vacío");
+            System.out.println("Mostrando estado vacío");
         } else {
             // Agregar cada presupuesto a la vista
             for (int i = 0; i < presupuestos.size(); i++) {
@@ -121,12 +121,12 @@ public class FragmentPresupuesto extends Fragment {
                 View itemView = crearItemPresupuesto(presupuesto, i);
                 containerPresupuestos.addView(itemView);
             }
-            System.out.println("✅ " + presupuestos.size() + " presupuestos mostrados");
+            System.out.println(" " + presupuestos.size() + " presupuestos mostrados");
         }
     }
 
     private void showFloatingWindow() {
-        System.out.println("🪟 Mostrando diálogo de agregar presupuesto");
+        System.out.println("Mostrando diálogo de agregar presupuesto");
 
         try {
             FragmentAgregarPresupuesto dialogFragment = new FragmentAgregarPresupuesto();
@@ -135,7 +135,7 @@ public class FragmentPresupuesto extends Fragment {
             dialogFragment.setPresupuestoGuardadoListener(new FragmentAgregarPresupuesto.PresupuestoGuardadoListener() {
                 @Override
                 public void onPresupuestoGuardado(Presupuesto presupuesto) {
-                    System.out.println("🎉 Presupuesto guardado recibido: " + presupuesto.getNombre());
+                    System.out.println("Presupuesto guardado recibido: " + presupuesto.getNombre());
 
                     // Agregar el presupuesto al ViewModel
                     viewModel.agregarPresupuesto(presupuesto);
@@ -148,13 +148,13 @@ public class FragmentPresupuesto extends Fragment {
             dialogFragment.show(getParentFragmentManager(), "presupuesto_dialog");
 
         } catch (Exception e) {
-            System.out.println("❌ Error al mostrar diálogo: " + e.getMessage());
+            System.out.println("Error al mostrar diálogo: " + e.getMessage());
             Toast.makeText(requireContext(), "Error al abrir formulario", Toast.LENGTH_SHORT).show();
         }
     }
 
     private View crearItemPresupuesto(Presupuesto presupuesto, int position) {
-        System.out.println("🛠️ Creando item para: " + presupuesto.getNombre());
+        System.out.println("Creando item para: " + presupuesto.getNombre());
 
         LayoutInflater inflater = LayoutInflater.from(requireContext());
         View itemView = inflater.inflate(R.layout.item_presupuesto, containerPresupuestos, false);
@@ -186,16 +186,16 @@ public class FragmentPresupuesto extends Fragment {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Error al configurar item: " + e.getMessage());
+            System.out.println("Error al configurar item: " + e.getMessage());
         }
 
         return itemView;
     }
 
     private void eliminarPresupuesto(int position) {
-        System.out.println("🗑️ Eliminando presupuesto en posición: " + position);
+        System.out.println("🗑Eliminando presupuesto en posición: " + position);
 
-        // ✅ AHORA SÍ EXISTE este método en el ViewModel
+        // AHORA SÍ EXISTE este método en el ViewModel
         viewModel.eliminarPresupuesto(position);
         Toast.makeText(requireContext(), "Presupuesto eliminado", Toast.LENGTH_SHORT).show();
     }
@@ -203,12 +203,12 @@ public class FragmentPresupuesto extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("🔄 FragmentPresupuesto: onResume");
+        System.out.println("FragmentPresupuesto: onResume");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        System.out.println("⏸️ FragmentPresupuesto: onPause");
+        System.out.println("FragmentPresupuesto: onPause");
     }
 }

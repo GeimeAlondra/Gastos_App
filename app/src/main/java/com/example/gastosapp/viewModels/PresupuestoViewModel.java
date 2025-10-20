@@ -15,7 +15,7 @@ public class PresupuestoViewModel extends ViewModel {
 
     public PresupuestoViewModel() {
         listaPresupuestos.setValue(new ArrayList<>());
-        System.out.println("🆕 ViewModel creado");
+        System.out.println("ViewModel creado");
     }
 
     public LiveData<List<Presupuesto>> getPresupuestos() {
@@ -30,11 +30,11 @@ public class PresupuestoViewModel extends ViewModel {
             newList.add(presupuesto);
             listaPresupuestos.setValue(newList);
 
-            System.out.println("✅ ViewModel: Presupuesto agregado - " + presupuesto.getNombre());
+            System.out.println("ViewModel: Presupuesto agregado - " + presupuesto.getNombre());
         }
     }
 
-    // ✅ AGREGA ESTE MÉTODO NUEVO
+    //  AGREGA ESTE MÉTODO NUEVO
     public void eliminarPresupuesto(int position) {
         List<Presupuesto> currentList = listaPresupuestos.getValue();
 
@@ -43,10 +43,10 @@ public class PresupuestoViewModel extends ViewModel {
             Presupuesto eliminado = newList.remove(position);
             listaPresupuestos.setValue(newList);
 
-            System.out.println("🗑️ ViewModel: Presupuesto eliminado - " + eliminado.getNombre());
+            System.out.println("ViewModel: Presupuesto eliminado - " + eliminado.getNombre());
             System.out.println("   Total presupuestos ahora: " + newList.size());
         } else {
-            System.out.println("❌ ViewModel: No se pudo eliminar - posición inválida: " + position);
+            System.out.println("ViewModel: No se pudo eliminar - posición inválida: " + position);
         }
     }
 
@@ -58,6 +58,6 @@ public class PresupuestoViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        System.out.println("💀 ViewModel destruido");
+        System.out.println("ViewModel destruido");
     }
 }
