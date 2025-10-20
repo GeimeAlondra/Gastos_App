@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#80000000"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="20dp">
 
-    <!-- CONTENEDOR DE LA VENTANA -->
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardAgregarPre"
-        android:layout_width="300dp"
-        android:layout_height="400dp"
+        android:id="@+id/cardView"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
         android:layout_gravity="center">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="#FFFFFF"
             android:padding="24dp">
@@ -32,42 +31,119 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:gravity="center"
+                android:textColor="@color/negro"
                 android:layout_marginBottom="20dp" />
 
+            <!-- Nombre del gasto -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNombreGasto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nombre del gasto" />
+                    android:hint="Nombre del gasto"
+                    android:textColor="@color/negro"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Cantidad -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp">
+                android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCantidad"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Cantidad"
+                    android:textColor="@color/negro"
                     android:inputType="numberDecimal" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Fecha de Inicio -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Fecha Inicio:"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/btnFechaInicio"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1.5"
+                    android:text="Seleccionar"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/celeste" />
+
+                <TextView
+                    android:id="@+id/tvFechaInicio"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="No seleccionada"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+            <!-- Fecha Final -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Fecha Final:"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/btnFechaFinal"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1.5"
+                    android:text="Seleccionar"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/celeste" />
+
+                <TextView
+                    android:id="@+id/tvFechaFinal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="No seleccionada"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+
+            </LinearLayout>
 
             <!-- Botones -->
             <Button
                 android:id="@+id/btnGuardar"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="GUARDAR"
+                android:text="GUARDAR PRESUPUESTO"
                 android:textSize="16sp"
                 android:layout_marginBottom="10dp"
-                android:backgroundTint="#2196F3" />
+                android:backgroundTint="#4CAF50" />
 
             <Button
                 android:id="@+id/btnCancelar"
