@@ -46,28 +46,34 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--    segmento de navbar-->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNV"
-        android:layout_alignParentBottom="true"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/bottomNVCL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:menu="@menu/opciones_menu"
-        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent">
+
+    <!--    segmento de navbar-->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:menu="@menu/opciones_menu"
+            app:labelVisibilityMode="selected"
+            app:itemRippleColor="@color/crema"
+            />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <!--        Linea separadora-->
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_above="@id/bottomNV"
+        android:layout_above="@id/bottomNVCL"
         android:background="@color/white"
-        app:layout_constraintTop_toTopOf="@+id/bottomNV"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNV"
+        app:layout_constraintTop_toTopOf="@+id/bottomNVCL"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNVCL"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
@@ -80,7 +86,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbarRL"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNV"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNVCL"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -51,7 +51,7 @@
                         android:id="@+id/imgPerfil"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:src="@drawable/perfil"
+                        android:src="@drawable/icon_perfil"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
