@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.example.gastosapp"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -61,6 +61,7 @@ dependencies {
 
     implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.29")
 
+    //    Animaciones LottiFiles
     implementation("com.airbnb.android:lottie:5.0.3")
 
 
