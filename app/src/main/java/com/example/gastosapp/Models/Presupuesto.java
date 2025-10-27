@@ -8,8 +8,8 @@ public class Presupuesto {
     private String fechaFinal;
     private long timestamp;
 
+    // ✅ CONSTRUCTOR VACÍO OBLIGATORIO para Gson
     public Presupuesto() {
-        // Constructor vacío para Firebase
     }
 
     public Presupuesto(String nombre, double cantidad, String fechaInicio, String fechaFinal) {
@@ -20,7 +20,7 @@ public class Presupuesto {
         this.timestamp = System.currentTimeMillis();
     }
 
-    // Getters y Setters
+    // Getters y Setters (OBLIGATORIOS para Gson)
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 

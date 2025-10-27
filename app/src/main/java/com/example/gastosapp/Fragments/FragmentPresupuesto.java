@@ -32,57 +32,42 @@ public class FragmentPresupuesto extends Fragment {
     private PresupuestoViewModel viewModel;
     private LinearLayout containerPresupuestos;
 
-    public FragmentPresupuesto() {
-        // Required empty public constructor
-    }
-
-    public static FragmentPresupuesto newInstance(String param1, String param2) {
-        FragmentPresupuesto fragment = new FragmentPresupuesto();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
-        // INICIALIZACIÓN CORREGIDA
-        viewModel = new ViewModelProvider(this).get(PresupuestoViewModel.class);
-        System.out.println("ViewModel inicializado");
+        // ✅ ViewModel a nivel de Activity para persistencia entre Fragments
+        viewModel = new ViewModelProvider(requireActivity()).get(PresupuestoViewModel.class);
+
+        // ✅ INICIALIZAR CON PERSISTENCIA
+        viewModel.init(requireContext());
+
+        System.out.println("🎯 FragmentPresupuesto creado");
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_presupuesto, container, false);
 
-        // Inicializar vistas
         containerPresupuestos = view.findViewById(R.id.containerPresupuestos);
         LottieAnimationView btnAddCategory = view.findViewById(R.id.agregarPresupuesto);
 
-        System.out.println("Vistas inicializadas");
+        System.out.println("🔍 Vistas inicializadas");
 
-        // Configurar Observer para los presupuestos
+        // Observer para los presupuestos
         viewModel.getPresupuestos().observe(getViewLifecycleOwner(), new Observer<List<Presupuesto>>() {
             @Override
             public void onChanged(List<Presupuesto> presupuestos) {
-                System.out.println("Observer ejecutado - " + presupuestos.size() + " presupuestos");
+                System.out.println("👀 Datos actualizados: " + presupuestos.size() + " presupuestos");
                 actualizarVistaPresupuestos(presupuestos);
             }
         });
 
-        // Configurar click listener del botón
         btnAddCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Botón presionado");
+                System.out.println("🎯 Botón agregar presionado");
                 btnAddCategory.playAnimation();
 
                 new Handler().postDelayed(new Runnable() {

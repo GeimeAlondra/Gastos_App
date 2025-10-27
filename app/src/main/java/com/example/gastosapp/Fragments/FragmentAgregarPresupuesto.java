@@ -27,6 +27,7 @@ public class FragmentAgregarPresupuesto extends DialogFragment {
     private Calendar calendarInicio, calendarFinal;
     private View rootView;
 
+
     // Interface para comunicación
     public interface PresupuestoGuardadoListener {
         void onPresupuestoGuardado(Presupuesto presupuesto);
@@ -42,14 +43,16 @@ public class FragmentAgregarPresupuesto extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_agregar_presupuesto, container, false);
-        this.rootView = view; // Guardar la referencia
+        this.rootView = view;
 
-        // Inicializar vistas
+        // ELIMINAR BORDE Y FONDO DEL DIÁLOGO - VERSIÓN MEJORADA
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            getDialog().getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
+
         initViews();
-
-        // Configurar listeners
         setupListeners();
-
         return view;
     }
 
@@ -190,4 +193,6 @@ public class FragmentAgregarPresupuesto extends DialogFragment {
 
         return true;
     }
+
+
 }
