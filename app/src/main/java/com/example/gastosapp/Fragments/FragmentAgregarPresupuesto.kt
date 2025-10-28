@@ -1,193 +1,195 @@
-package com.example.gastosapp.Fragments;
+package com.example.gastosapp.Fragments
 
-import android.app.DatePickerDialog;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.app.DatePickerDialog
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.DialogFragment
+import com.example.gastosapp.Models.Presupuestos
+import com.example.gastosapp.R
+import com.google.android.material.textfield.TextInputEditText
+import java.util.Calendar
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
+class FragmentAgregarPresupuesto : DialogFragment() {
 
-import com.example.gastosapp.Models.Presupuesto;
-import com.example.gastosapp.R;
-import com.google.android.material.textfield.TextInputEditText;
+    private lateinit var etNombreGasto: TextInputEditText
+    private lateinit var etCantidad: TextInputEditText
+    private lateinit var btnFechaInicio: Button
+    private lateinit var btnFechaFinal: Button
+    private lateinit var tvFechaInicio: TextView
+    private lateinit var tvFechaFinal: TextView
+    private lateinit var rootView: View
+    private lateinit var calendarInicio: Calendar
+    private lateinit var calendarFinal: Calendar
 
-import java.util.Calendar;
+    private var listener: PresupuestoGuardadoListener? = null
 
-public class FragmentAgregarPresupuesto extends DialogFragment {
-
-    private TextInputEditText etNombreGasto, etCantidad;
-    private Button btnFechaInicio, btnFechaFinal;
-    private TextView tvFechaInicio, tvFechaFinal;
-    private Calendar calendarInicio, calendarFinal;
-    private View rootView;
-
-    // Interface para comunicación
-    public interface PresupuestoGuardadoListener {
-        void onPresupuestoGuardado(Presupuesto presupuesto);
+    fun setPresupuestoGuardadoListener(listener: PresupuestoGuardadoListener) {
+        this.listener = listener
     }
 
-    private PresupuestoGuardadoListener listener;
-
-    public void setPresupuestoGuardadoListener(PresupuestoGuardadoListener listener) {
-        this.listener = listener;
+    interface PresupuestoGuardadoListener {
+        fun onPresupuestoGuardado(presupuesto: Presupuestos)
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_agregar_presupuesto, container, false);
-        this.rootView = view; // Guardar la referencia
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        rootView = inflater.inflate(R.layout.fragment_agregar_presupuesto, container, false)
 
         // Inicializar vistas
-        initViews();
+        initViews()
 
         // Configurar listeners
-        setupListeners();
+        setupListeners()
 
-        return view;
+        return rootView
     }
 
-    private void initViews() {
-        // Usar rootView en lugar de view
-        etNombreGasto = rootView.findViewById(R.id.etNombreGasto);
-        etCantidad = rootView.findViewById(R.id.etCantidad);
-        btnFechaInicio = rootView.findViewById(R.id.btnFechaInicio);
-        btnFechaFinal = rootView.findViewById(R.id.btnFechaFinal);
-        tvFechaInicio = rootView.findViewById(R.id.tvFechaInicio);
-        tvFechaFinal = rootView.findViewById(R.id.tvFechaFinal);
+    private fun initViews() {
+        etNombreGasto = rootView.findViewById(R.id.etNombreGasto)
+        etCantidad = rootView.findViewById(R.id.etCantidad)
+        btnFechaInicio = rootView.findViewById(R.id.btnFechaInicio)
+        btnFechaFinal = rootView.findViewById(R.id.btnFechaFinal)
+        tvFechaInicio = rootView.findViewById(R.id.tvFechaInicio)
+        tvFechaFinal = rootView.findViewById(R.id.tvFechaFinal)
 
         // Inicializar calendarios
-        calendarInicio = Calendar.getInstance();
-        calendarFinal = Calendar.getInstance();
-        calendarFinal.add(Calendar.MONTH, 1);
+        calendarInicio = Calendar.getInstance()
+        calendarFinal = Calendar.getInstance().apply {
+            add(Calendar.MONTH, 1)
+        }
+
+        // Establecer texto inicial (si no está configurado en XML)
+        tvFechaInicio.text = "No seleccionada"
+        tvFechaFinal.text = "No seleccionada"
+        btnFechaInicio.text = "Seleccionar"
+        btnFechaFinal.text = "Seleccionar"
     }
 
-    private void setupListeners() {
+    private fun setupListeners() {
         // Botón Fecha Inicio
-        btnFechaInicio.setOnClickListener(v -> showDatePicker(true));
+        btnFechaInicio.setOnClickListener { showDatePicker(true) }
 
         // Botón Fecha Final
-        btnFechaFinal.setOnClickListener(v -> showDatePicker(false));
+        btnFechaFinal.setOnClickListener { showDatePicker(false) }
 
-        // Usar rootView
-        rootView.findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarPresupuesto());
+        // Botón Guardar
+        rootView.findViewById<Button>(R.id.btnGuardar).setOnClickListener { guardarPresupuesto() }
 
-        // Usar rootView
-        rootView.findViewById(R.id.btnCancelar).setOnClickListener(v -> dismiss());
+        // Botón Cancelar
+        rootView.findViewById<Button>(R.id.btnCancelar).setOnClickListener { dismiss() }
     }
 
-    private void showDatePicker(final boolean isStartDate) {
-        Calendar calendar = isStartDate ? calendarInicio : calendarFinal;
+    private fun showDatePicker(isStartDate: Boolean) {
+        val calendar = if (isStartDate) calendarInicio else calendarFinal
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                requireContext(),
-                (view, year, month, dayOfMonth) -> {
-                    calendar.set(Calendar.YEAR, year);
-                    calendar.set(Calendar.MONTH, month);
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                calendar.set(Calendar.YEAR, year)
+                calendar.set(Calendar.MONTH, month)
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                    updateDateDisplay(isStartDate, year, month, dayOfMonth);
+                updateDateDisplay(isStartDate, year, month, dayOfMonth)
 
-                    if (isStartDate && calendarFinal.before(calendarInicio)) {
-                        calendarFinal.setTime(calendarInicio.getTime());
-                        updateDateDisplay(false,
-                                calendarFinal.get(Calendar.YEAR),
-                                calendarFinal.get(Calendar.MONTH),
-                                calendarFinal.get(Calendar.DAY_OF_MONTH));
-                    }
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-        );
-
-        if (isStartDate) {
-            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-        } else {
-            datePickerDialog.getDatePicker().setMinDate(calendarInicio.getTimeInMillis());
-        }
-
-        datePickerDialog.show();
-    }
-
-    private void updateDateDisplay(boolean isStartDate, int year, int month, int day) {
-        String dateString = String.format("%02d/%02d/%d", day, month + 1, year);
-
-        if (isStartDate) {
-            tvFechaInicio.setText(dateString);
-            btnFechaInicio.setText("Cambiar");
-        } else {
-            tvFechaFinal.setText(dateString);
-            btnFechaFinal.setText("Cambiar");
+                if (isStartDate && calendarFinal.before(calendarInicio)) {
+                    calendarFinal.time = calendarInicio.time
+                    updateDateDisplay(false,
+                        calendarFinal.get(Calendar.YEAR),
+                        calendarFinal.get(Calendar.MONTH),
+                        calendarFinal.get(Calendar.DAY_OF_MONTH))
+                }
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).apply {
+            datePicker.apply {
+                if (isStartDate) {
+                    minDate = System.currentTimeMillis() - 1000
+                } else {
+                    minDate = calendarInicio.timeInMillis
+                }
+            }
+            show()
         }
     }
 
-    private void guardarPresupuesto() {
-        System.out.println("DEBUG: guardarPresupuesto() INICIADO");
+    private fun updateDateDisplay(isStartDate: Boolean, year: Int, month: Int, day: Int) {
+        val dateString = String.format("%02d/%02d/%d", day, month + 1, year)
+        val (textView, button) = if (isStartDate) {
+            tvFechaInicio to btnFechaInicio
+        } else {
+            tvFechaFinal to btnFechaFinal
+        }
+        textView.text = dateString
+        button.text = "Cambiar"
+    }
+
+    private fun guardarPresupuesto() {
+        println("DEBUG: guardarPresupuesto() INICIADO")
 
         if (!validarCampos()) {
-            System.out.println("DEBUG: Validación falló");
-            return;
+            println("DEBUG: Validación falló")
+            return
         }
 
-        String nombre = etNombreGasto.getText().toString().trim();
-        double cantidad = Double.parseDouble(etCantidad.getText().toString().trim());
-        String fechaInicio = tvFechaInicio.getText().toString();
-        String fechaFinal = tvFechaFinal.getText().toString();
+        val nombre = etNombreGasto.text.toString().trim()
+        val cantidad = etCantidad.text.toString().trim().toDoubleOrNull() ?: 0.0
+        val fechaInicio = tvFechaInicio.text.toString()
+        val fechaFinal = tvFechaFinal.text.toString()
 
-        System.out.println("   DEBUG: Datos capturados:");
-        System.out.println("   Nombre: " + nombre);
-        System.out.println("   Cantidad: " + cantidad);
-        System.out.println("   Fecha Inicio: " + fechaInicio);
-        System.out.println("   Fecha Final: " + fechaFinal);
+        println("   DEBUG: Datos capturados:")
+        println("   Nombre: $nombre")
+        println("   Cantidad: $cantidad")
+        println("   Fecha Inicio: $fechaInicio")
+        println("   Fecha Final: $fechaFinal")
 
-        Presupuesto presupuesto = new Presupuesto(nombre, cantidad, fechaInicio, fechaFinal);
-        System.out.println("DEBUG: Objeto Presupuesto creado");
+        val presupuesto = Presupuestos(nombre, cantidad, fechaInicio, fechaFinal)
+        println("DEBUG: Objeto Presupuesto creado")
 
-        // VERIFICAR SI EL LISTENER ESTÁ CONFIGURADO
-        if (listener != null) {
-            System.out.println("DEBUG: Listener NO es null - llamando onPresupuestoGuardado");
-            listener.onPresupuestoGuardado(presupuesto);
-        } else {
-            System.out.println("DEBUG: Listener ES null - NO se llamará onPresupuestoGuardado");
-            Toast.makeText(requireContext(), "Error: Listener no configurado", Toast.LENGTH_LONG).show();
+        // Verificar y llamar al listener
+        listener?.onPresupuestoGuardado(presupuesto) ?: run {
+            println("DEBUG: Listener ES null - NO se llamará onPresupuestoGuardado")
+            Toast.makeText(requireContext(), "Error: Listener no configurado", Toast.LENGTH_LONG).show()
         }
 
-        System.out.println("DEBUG: guardarPresupuesto() FINALIZADO");
-        dismiss();
-        Toast.makeText(requireContext(), "Presupuesto guardado!", Toast.LENGTH_SHORT).show();
+        println("DEBUG: guardarPresupuesto() FINALIZADO")
+        dismiss()
+        Toast.makeText(requireContext(), "Presupuesto guardado!", Toast.LENGTH_SHORT).show()
     }
 
-    private boolean validarCampos() {
-        String nombre = etNombreGasto.getText().toString().trim();
-        String cantidadStr = etCantidad.getText().toString().trim();
+    private fun validarCampos(): Boolean {
+        val nombre = etNombreGasto.text.toString().trim()
+        val cantidadStr = etCantidad.text.toString().trim()
 
         if (nombre.isEmpty()) {
-            etNombreGasto.setError("Ingresa un nombre para el gasto");
-            return false;
+            etNombreGasto.error = "Ingresa un nombre para el gasto"
+            return false
         }
 
         if (cantidadStr.isEmpty()) {
-            etCantidad.setError("Ingresa la cantidad");
-            return false;
+            etCantidad.error = "Ingresa la cantidad"
+            return false
         }
 
-        if (tvFechaInicio.getText().toString().equals("No seleccionada")) {
-            Toast.makeText(requireContext(), "Selecciona la fecha de inicio", Toast.LENGTH_SHORT).show();
-            return false;
+        if (tvFechaInicio.text.toString() == "No seleccionada") {
+            Toast.makeText(requireContext(), "Selecciona la fecha de inicio", Toast.LENGTH_SHORT).show()
+            return false
         }
 
-        if (tvFechaFinal.getText().toString().equals("No seleccionada")) {
-            Toast.makeText(requireContext(), "Selecciona la fecha final", Toast.LENGTH_SHORT).show();
-            return false;
+        if (tvFechaFinal.text.toString() == "No seleccionada") {
+            Toast.makeText(requireContext(), "Selecciona la fecha final", Toast.LENGTH_SHORT).show()
+            return false
         }
 
-        return true;
+        return true
     }
 }

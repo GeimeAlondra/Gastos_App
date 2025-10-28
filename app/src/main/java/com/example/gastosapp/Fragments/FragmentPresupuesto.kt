@@ -1,214 +1,185 @@
-package com.example.gastosapp.Fragments;
+package com.example.gastosapp.Fragments
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.airbnb.lottie.LottieAnimationView
+import com.example.gastosapp.Models.Presupuestos
+import com.example.gastosapp.R
+import com.example.gastosapp.viewModels.PresupuestoViewModel
+import com.google.firebase.database.FirebaseDatabase
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+class FragmentPresupuesto : Fragment() {
 
-import com.airbnb.lottie.LottieAnimationView;
-import com.example.gastosapp.Models.Presupuesto;
-import com.example.gastosapp.R;
-import com.example.gastosapp.viewModels.PresupuestoViewModel;
+    private val ARG_PARAM1 = "param1"
+    private val ARG_PARAM2 = "param2"
+    private var mParam1: String? = null
+    private var mParam2: String? = null
 
-import java.util.List;
+    private lateinit var viewModel: PresupuestoViewModel
+    private lateinit var containerPresupuestos: LinearLayout
+    private val database = FirebaseDatabase.getInstance().reference.child("presupuestos")
 
-public class FragmentPresupuesto extends Fragment {
-
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    private String mParam1;
-    private String mParam2;
-
-    // VARIABLE CORREGIDA: PresupuestoViewModel (con P mayúscula)
-    private PresupuestoViewModel viewModel;
-    private LinearLayout containerPresupuestos;
-
-    public FragmentPresupuesto() {
-        // Required empty public constructor
-    }
-
-    public static FragmentPresupuesto newInstance(String param1, String param2) {
-        FragmentPresupuesto fragment = new FragmentPresupuesto();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            mParam1 = it.getString(ARG_PARAM1)
+            mParam2 = it.getString(ARG_PARAM2)
         }
 
-        // INICIALIZACIÓN CORREGIDA
-        viewModel = new ViewModelProvider(this).get(PresupuestoViewModel.class);
-        System.out.println("ViewModel inicializado");
+        viewModel = ViewModelProvider(this)[PresupuestoViewModel::class.java]
+        println("ViewModel inicializado")
     }
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_presupuesto, container, false);
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_presupuesto, container, false)
 
         // Inicializar vistas
-        containerPresupuestos = view.findViewById(R.id.containerPresupuestos);
-        LottieAnimationView btnAddCategory = view.findViewById(R.id.agregarPresupuesto);
+        containerPresupuestos = view.findViewById(R.id.containerPresupuestos)
+        val btnAddCategory: LottieAnimationView = view.findViewById(R.id.agregarPresupuesto)
 
-        System.out.println("Vistas inicializadas");
+        println("Vistas inicializadas")
 
         // Configurar Observer para los presupuestos
-        viewModel.getPresupuestos().observe(getViewLifecycleOwner(), new Observer<List<Presupuesto>>() {
-            @Override
-            public void onChanged(List<Presupuesto> presupuestos) {
-                System.out.println("Observer ejecutado - " + presupuestos.size() + " presupuestos");
-                actualizarVistaPresupuestos(presupuestos);
-            }
-        });
+        viewModel.presupuestos.observe(viewLifecycleOwner) { presupuestos ->
+            println("Observer ejecutado - ${presupuestos.size} presupuestos")
+            actualizarVistaPresupuestos(presupuestos)
+        }
 
         // Configurar click listener del botón
-        btnAddCategory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println("Botón presionado");
-                btnAddCategory.playAnimation();
+        btnAddCategory.setOnClickListener {
+            println("Botón presionado")
+            btnAddCategory.playAnimation()
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        showFloatingWindow();
-                    }
-                }, 500);
-            }
-        });
+            Handler(Looper.getMainLooper()).postDelayed({
+                showFloatingWindow()
+            }, 500)
+        }
 
-        return view;
+        return view
     }
 
-    private void actualizarVistaPresupuestos(List<Presupuesto> presupuestos) {
-        System.out.println("Actualizando vista con " + presupuestos.size() + " presupuestos");
+    private fun actualizarVistaPresupuestos(presupuestos: List<Presupuestos>) {
+        println("Actualizando vista con ${presupuestos.size} presupuestos")
 
         // Limpiar el contenedor
-        containerPresupuestos.removeAllViews();
+        containerPresupuestos.removeAllViews()
 
         if (presupuestos.isEmpty()) {
             // Mostrar estado vacío
-            TextView tvEmpty = new TextView(requireContext());
-            tvEmpty.setText("No hay presupuestos. ¡Agrega uno nuevo! ");
-            tvEmpty.setTextSize(16);
-            tvEmpty.setGravity(View.TEXT_ALIGNMENT_CENTER);
-            tvEmpty.setPadding(0, 50, 0, 50);
-            tvEmpty.setTextColor(getResources().getColor(android.R.color.darker_gray));
-            containerPresupuestos.addView(tvEmpty);
-
-            System.out.println("Mostrando estado vacío");
+            val tvEmpty = TextView(requireContext()).apply {
+                text = "No hay presupuestos. ¡Agrega uno nuevo!"
+                textSize = 16f
+                gravity = View.TEXT_ALIGNMENT_CENTER
+                setPadding(0, 50, 0, 50)
+                setTextColor(resources.getColor(android.R.color.darker_gray, null))
+            }
+            containerPresupuestos.addView(tvEmpty)
+            println("Mostrando estado vacío")
         } else {
             // Agregar cada presupuesto a la vista
-            for (int i = 0; i < presupuestos.size(); i++) {
-                Presupuesto presupuesto = presupuestos.get(i);
-                View itemView = crearItemPresupuesto(presupuesto, i);
-                containerPresupuestos.addView(itemView);
+            presupuestos.forEachIndexed { index, presupuesto ->
+                val itemView = crearItemPresupuesto(presupuesto, index)
+                containerPresupuestos.addView(itemView)
             }
-            System.out.println(" " + presupuestos.size() + " presupuestos mostrados");
+            println("${presupuestos.size} presupuestos mostrados")
         }
     }
 
-    private void showFloatingWindow() {
-        System.out.println("Mostrando diálogo de agregar presupuesto");
+    private fun showFloatingWindow() {
+        println("Mostrando diálogo de agregar presupuesto")
 
         try {
-            FragmentAgregarPresupuesto dialogFragment = new FragmentAgregarPresupuesto();
+            val dialogFragment = FragmentAgregarPresupuesto()
 
             // Configurar el listener para cuando se guarde un presupuesto
-            dialogFragment.setPresupuestoGuardadoListener(new FragmentAgregarPresupuesto.PresupuestoGuardadoListener() {
-                @Override
-                public void onPresupuestoGuardado(Presupuesto presupuesto) {
-                    System.out.println("Presupuesto guardado recibido: " + presupuesto.getNombre());
+            dialogFragment.setPresupuestoGuardadoListener(object : FragmentAgregarPresupuesto.PresupuestoGuardadoListener {
+                override fun onPresupuestoGuardado(presupuesto: Presupuestos) {
+                    println("Presupuesto guardado recibido: ${presupuesto.nombre}")
 
-                    // Agregar el presupuesto al ViewModel
-                    viewModel.agregarPresupuesto(presupuesto);
-
-                    Toast.makeText(requireContext(), "¡Presupuesto agregado!", Toast.LENGTH_SHORT).show();
+                    // Guardar en Firebase
+                    val presupuestoId = database.push().key ?: return
+                    presupuesto.id = presupuestoId
+                    database.child(presupuestoId).setValue(presupuesto)
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "¡Presupuesto agregado!", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(requireContext(), "Error al guardar en Firebase", Toast.LENGTH_SHORT).show()
+                        }
                 }
-            });
+            })
 
             // Mostrar el diálogo
-            dialogFragment.show(getParentFragmentManager(), "presupuesto_dialog");
+            dialogFragment.show(parentFragmentManager, "presupuesto_dialog")
 
-        } catch (Exception e) {
-            System.out.println("Error al mostrar diálogo: " + e.getMessage());
-            Toast.makeText(requireContext(), "Error al abrir formulario", Toast.LENGTH_SHORT).show();
+        } catch (e: Exception) {
+            println("Error al mostrar diálogo: ${e.message}")
+            Toast.makeText(requireContext(), "Error al abrir formulario", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private View crearItemPresupuesto(Presupuesto presupuesto, int position) {
-        System.out.println("Creando item para: " + presupuesto.getNombre());
+    private fun crearItemPresupuesto(presupuesto: Presupuestos, position: Int): View {
+        println("Creando item para: ${presupuesto.nombre}")
 
-        LayoutInflater inflater = LayoutInflater.from(requireContext());
-        View itemView = inflater.inflate(R.layout.item_presupuesto, containerPresupuestos, false);
+        val inflater = LayoutInflater.from(requireContext())
+        val itemView = inflater.inflate(R.layout.item_presupuesto, containerPresupuestos, false)
 
         try {
             // Configurar las vistas del item
-            TextView tvNombre = itemView.findViewById(R.id.tvNombrePresupuesto);
-            TextView tvCantidad = itemView.findViewById(R.id.tvCantidad);
-            TextView tvFechaInicio = itemView.findViewById(R.id.tvFechaInicio);
-            TextView tvFechaFinal = itemView.findViewById(R.id.tvFechaFinal);
-            TextView tvEstado = itemView.findViewById(R.id.tvEstado);
-
-            // Establecer los datos
-            tvNombre.setText(presupuesto.getNombre());
-            tvCantidad.setText(String.format("$%.2f", presupuesto.getCantidad()));
-            tvFechaInicio.setText(presupuesto.getFechaInicio());
-            tvFechaFinal.setText(presupuesto.getFechaFinal());
-            tvEstado.setText("Activo");
+            itemView.findViewById<TextView>(R.id.tvNombrePresupuesto).text = presupuesto.nombre
+            itemView.findViewById<TextView>(R.id.tvCantidad).text = String.format("$%.2f", presupuesto.cantidad)
+            itemView.findViewById<TextView>(R.id.tvFechaInicio).text = presupuesto.fechaInicio
+            itemView.findViewById<TextView>(R.id.tvFechaFinal).text = presupuesto.fechaFinal
+            itemView.findViewById<TextView>(R.id.tvEstado).text = "Activo"
 
             // Configurar botón de eliminar
-            View btnEliminar = itemView.findViewById(R.id.btnEliminar);
-            if (btnEliminar != null) {
-                btnEliminar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        eliminarPresupuesto(position);
-                    }
-                });
+            itemView.findViewById<View>(R.id.btnEliminar)?.setOnClickListener {
+                eliminarPresupuesto(position)
             }
 
-        } catch (Exception e) {
-            System.out.println("Error al configurar item: " + e.getMessage());
+        } catch (e: Exception) {
+            println("Error al configurar item: ${e.message}")
         }
 
-        return itemView;
+        return itemView
     }
 
-    private void eliminarPresupuesto(int position) {
-        System.out.println("🗑Eliminando presupuesto en posición: " + position);
+    private fun eliminarPresupuesto(position: Int) {
+        println("🗑 Eliminando presupuesto en posición: $position")
 
-        // AHORA SÍ EXISTE este método en el ViewModel
-        viewModel.eliminarPresupuesto(position);
-        Toast.makeText(requireContext(), "Presupuesto eliminado", Toast.LENGTH_SHORT).show();
+        viewModel.eliminarPresupuesto(position)
+        Toast.makeText(requireContext(), "Presupuesto eliminado", Toast.LENGTH_SHORT).show()
+
+        // Opcional: Eliminar de Firebase si ya está guardado
+        viewModel.presupuestos.value?.getOrNull(position)?.id?.let { id ->
+            database.child(id).removeValue()
+                .addOnFailureListener {
+                    Toast.makeText(requireContext(), "Error al eliminar de Firebase", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        System.out.println("FragmentPresupuesto: onResume");
+    override fun onResume() {
+        super.onResume()
+        println("FragmentPresupuesto: onResume")
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        System.out.println("FragmentPresupuesto: onPause");
+    override fun onPause() {
+        super.onPause()
+        println("FragmentPresupuesto: onPause")
     }
 }

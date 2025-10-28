@@ -1,63 +1,95 @@
-package com.example.gastosapp.viewModels;
+package com.example.gastosapp.viewModels
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.example.gastosapp.Models.Presupuestos
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
-import com.example.gastosapp.Models.Presupuesto;
+class PresupuestoViewModel : ViewModel() {
 
-import java.util.ArrayList;
-import java.util.List;
+    private val _listaPresupuestos = MutableLiveData<List<Presupuestos>>(emptyList())
+    val presupuestos: LiveData<List<Presupuestos>> get() = _listaPresupuestos
 
-public class PresupuestoViewModel extends ViewModel {
+    private val database = FirebaseDatabase.getInstance().reference.child("presupuestos")
 
-    private MutableLiveData<List<Presupuesto>> listaPresupuestos = new MutableLiveData<>();
-
-    public PresupuestoViewModel() {
-        listaPresupuestos.setValue(new ArrayList<>());
-        System.out.println("ViewModel creado");
+    init {
+        println("ViewModel creado")
+        cargarPresupuestosDesdeFirebase()
     }
 
-    public LiveData<List<Presupuesto>> getPresupuestos() {
-        return listaPresupuestos;
+    private fun cargarPresupuestosDesdeFirebase() {
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val presupuestosList = mutableListOf<Presupuestos>()
+                for (childSnapshot in snapshot.children) {
+                    val presupuesto = childSnapshot.getValue(Presupuestos::class.java)
+                    presupuesto?.id = childSnapshot.key // Asegura que el ID se asigne
+                    presupuesto?.let { presupuestosList.add(it) }
+                }
+                // Solo actualiza si la lista ha cambiado
+                if (_listaPresupuestos.value != presupuestosList) {
+                    _listaPresupuestos.value = presupuestosList
+                    println("DEBUG: Lista de presupuestos actualizada desde Firebase: ${presupuestosList.size}")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                println("Error al cargar presupuestos desde Firebase: ${error.message}")
+            }
+        })
     }
 
-    public void agregarPresupuesto(Presupuesto presupuesto) {
-        List<Presupuesto> currentList = listaPresupuestos.getValue();
+    fun agregarPresupuesto(presupuesto: Presupuestos) {
+        val currentList = _listaPresupuestos.value?.toMutableList() ?: mutableListOf()
+        val presupuestoId = database.push().key ?: return
+        //presupuesto.id = presupuestoId
+        currentList.add(presupuesto)
+        _listaPresupuestos.value = currentList
 
-        if (currentList != null) {
-            List<Presupuesto> newList = new ArrayList<>(currentList);
-            newList.add(presupuesto);
-            listaPresupuestos.setValue(newList);
-
-            System.out.println("ViewModel: Presupuesto agregado - " + presupuesto.getNombre());
-        }
+        database.child(presupuestoId).setValue(presupuesto)
+            .addOnSuccessListener {
+                println("ViewModel: Presupuesto agregado - ${presupuesto.nombre}")
+            }
+            .addOnFailureListener {
+                println("Error al guardar en Firebase: ${it.message}")
+                // Opcional: Revertir la lista si falla
+                currentList.remove(presupuesto)
+                _listaPresupuestos.value = currentList
+            }
     }
 
-    //  AGREGA ESTE MÉTODO NUEVO
-    public void eliminarPresupuesto(int position) {
-        List<Presupuesto> currentList = listaPresupuestos.getValue();
+    fun eliminarPresupuesto(position: Int) {
+        val currentList = _listaPresupuestos.value?.toMutableList() ?: return
+        if (position in currentList.indices) {
+            val presupuesto = currentList.removeAt(position)
+            _listaPresupuestos.value = currentList
 
-        if (currentList != null && position >= 0 && position < currentList.size()) {
-            List<Presupuesto> newList = new ArrayList<>(currentList);
-            Presupuesto eliminado = newList.remove(position);
-            listaPresupuestos.setValue(newList);
-
-            System.out.println("ViewModel: Presupuesto eliminado - " + eliminado.getNombre());
-            System.out.println("   Total presupuestos ahora: " + newList.size());
+            presupuesto.id?.let { id ->
+                database.child(id).removeValue()
+                    .addOnSuccessListener {
+                        println("ViewModel: Presupuesto eliminado - ${presupuesto.nombre}")
+                        println("   Total presupuestos ahora: ${currentList.size}")
+                    }
+                    .addOnFailureListener {
+                        println("Error al eliminar de Firebase: ${it.message}")
+                        // Opcional: Revertir la eliminación si falla
+                        currentList.add(position, presupuesto)
+                        _listaPresupuestos.value = currentList
+                    }
+            } ?: println("ViewModel: No se pudo eliminar - ID no encontrado")
         } else {
-            System.out.println("ViewModel: No se pudo eliminar - posición inválida: " + position);
+            println("ViewModel: No se pudo eliminar - posición inválida: $position")
         }
     }
 
-    public int getCantidadPresupuestos() {
-        List<Presupuesto> currentList = listaPresupuestos.getValue();
-        return currentList != null ? currentList.size() : 0;
-    }
+    fun getCantidadPresupuestos(): Int = _listaPresupuestos.value?.size ?: 0
 
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        System.out.println("ViewModel destruido");
+    override fun onCleared() {
+        super.onCleared()
+        println("ViewModel destruido")
     }
 }
