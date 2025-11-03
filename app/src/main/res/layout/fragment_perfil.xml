@@ -6,7 +6,6 @@
     android:id="@+id/fragment_perfil_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
     android:orientation="vertical"
     android:gravity="center"
     tools:context=".PerfilActivity">
@@ -14,27 +13,36 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/user_file"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
+        android:background="@drawable/green_background"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         >
 
+        <View
+            android:id="@+id/espacioSeparador"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
         <ImageView
             android:id="@+id/imgPerfil"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@drawable/icon_perfil"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/p_nombre"
+            app:layout_constraintTop_toBottomOf="@+id/espacioSeparador"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             />
 
         <TextView
             android:id="@+id/p_nombre"
-            android:textColor="@color/black"
+            android:textColor="@color/blanco"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textAlignment="center"
@@ -44,43 +52,55 @@
             android:layout_height="wrap_content"
 
             app:layout_constraintTop_toBottomOf="@+id/imgPerfil"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/p_correo"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:drawablePadding="15dp"
-        android:hint="@string/tv_userEmail"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="italic"
-        app:drawableStartCompat="@drawable/correo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="0dp"
+        android:layout_margin="25dp"
         app:layout_constraintTop_toBottomOf="@+id/user_file"
-        />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnCerrarSesion"
-        android:layout_width="180dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="35dp"
-        android:backgroundTint="@color/light_green"
-        android:drawableEnd="@drawable/exit"
-        android:text="@string/tv_cerrarSesion"
-        android:textColor="@color/black"
-        android:textColorHint="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/p_correo"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        >
+
+        <TextView
+            android:id="@+id/p_correo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawablePadding="15dp"
+            android:hint="@string/tv_userEmail"
+            android:textColor="@color/negro"
+            android:textSize="16sp"
+            android:textStyle="italic"
+            app:drawableStartCompat="@drawable/correo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCerrarSesion"
+            android:layout_width="180dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="35dp"
+            android:backgroundTint="@color/verde"
+            android:drawableEnd="@drawable/exit"
+            android:text="@string/tv_cerrarSesion"
+            android:textColor="@color/negro"
+            android:textColorHint="@color/negro"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/p_correo"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
