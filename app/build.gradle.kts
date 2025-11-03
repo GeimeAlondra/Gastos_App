@@ -64,9 +64,10 @@ dependencies {
     //    Animaciones LottiFiles
     implementation("com.airbnb.android:lottie:5.0.3")
 
-    // Navbar animado
-//    implementation("com.etebarian:meow-bottom-navigation:1.9.2")
-//    implementation("com.aurelhubert:ahbottomnavigation:2.3.4")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
