@@ -10,13 +10,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
-import com.example.gastosapp.Models.Presupuestos
+import com.example.gastosapp.Models.Presupuesto
 import com.example.gastosapp.R
 import com.example.gastosapp.viewModels.PresupuestoViewModel
 import com.google.firebase.database.FirebaseDatabase
+import kotlin.collections.getOrNull
 
 class FragmentPresupuesto : Fragment() {
 
@@ -54,9 +54,9 @@ class FragmentPresupuesto : Fragment() {
         println("Vistas inicializadas")
 
         // Configurar Observer para los presupuestos
-        viewModel.presupuestos.observe(viewLifecycleOwner) { presupuestos ->
-            println("Observer ejecutado - ${presupuestos.size} presupuestos")
-            actualizarVistaPresupuestos(presupuestos)
+        viewModel.presupuestos.observe(viewLifecycleOwner) { presupuesto ->
+            println("Observer ejecutado - ${presupuesto.size} presupuestos")
+            actualizarVistaPresupuestos(presupuesto)
         }
 
         // Configurar click listener del botón
@@ -68,17 +68,16 @@ class FragmentPresupuesto : Fragment() {
                 showFloatingWindow()
             }, 500)
         }
-
         return view
     }
 
-    private fun actualizarVistaPresupuestos(presupuestos: List<Presupuestos>) {
-        println("Actualizando vista con ${presupuestos.size} presupuestos")
+    private fun actualizarVistaPresupuestos(presupuesto: List<Presupuesto>) {
+        println("Actualizando vista con ${presupuesto.size} presupuestos")
 
         // Limpiar el contenedor
         containerPresupuestos.removeAllViews()
 
-        if (presupuestos.isEmpty()) {
+        if (presupuesto.isEmpty()) {
             // Mostrar estado vacío
             val tvEmpty = TextView(requireContext()).apply {
                 text = "No hay presupuestos. ¡Agrega uno nuevo!"
@@ -91,11 +90,11 @@ class FragmentPresupuesto : Fragment() {
             println("Mostrando estado vacío")
         } else {
             // Agregar cada presupuesto a la vista
-            presupuestos.forEachIndexed { index, presupuesto ->
+            presupuesto.forEachIndexed { index, presupuesto ->
                 val itemView = crearItemPresupuesto(presupuesto, index)
                 containerPresupuestos.addView(itemView)
             }
-            println("${presupuestos.size} presupuestos mostrados")
+            println("${presupuesto.size} presupuestos mostrados")
         }
     }
 
@@ -107,7 +106,7 @@ class FragmentPresupuesto : Fragment() {
 
             // Configurar el listener para cuando se guarde un presupuesto
             dialogFragment.setPresupuestoGuardadoListener(object : FragmentAgregarPresupuesto.PresupuestoGuardadoListener {
-                override fun onPresupuestoGuardado(presupuesto: Presupuestos) {
+                override fun onPresupuestoGuardado(presupuesto: Presupuesto) {
                     println("Presupuesto guardado recibido: ${presupuesto.nombre}")
 
                     // Guardar en Firebase
@@ -132,7 +131,7 @@ class FragmentPresupuesto : Fragment() {
         }
     }
 
-    private fun crearItemPresupuesto(presupuesto: Presupuestos, position: Int): View {
+    private fun crearItemPresupuesto(presupuesto: Presupuesto, position: Int): View {
         println("Creando item para: ${presupuesto.nombre}")
 
         val inflater = LayoutInflater.from(requireContext())
@@ -145,7 +144,7 @@ class FragmentPresupuesto : Fragment() {
             itemView.findViewById<TextView>(R.id.tvFechaInicio).text = presupuesto.fechaInicio
             itemView.findViewById<TextView>(R.id.tvFechaFinal).text = presupuesto.fechaFinal
             itemView.findViewById<TextView>(R.id.tvEstado).text = "Activo"
-
+            
             // Configurar botón de eliminar
             itemView.findViewById<View>(R.id.btnEliminar)?.setOnClickListener {
                 eliminarPresupuesto(position)
@@ -159,7 +158,7 @@ class FragmentPresupuesto : Fragment() {
     }
 
     private fun eliminarPresupuesto(position: Int) {
-        println("🗑 Eliminando presupuesto en posición: $position")
+        println("Eliminando presupuesto en posición: $position")
 
         viewModel.eliminarPresupuesto(position)
         Toast.makeText(requireContext(), "Presupuesto eliminado", Toast.LENGTH_SHORT).show()

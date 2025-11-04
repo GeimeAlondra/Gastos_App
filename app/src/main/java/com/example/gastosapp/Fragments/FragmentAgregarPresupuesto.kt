@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import com.example.gastosapp.Models.Presupuestos
+import com.example.gastosapp.Models.Presupuesto
 import com.example.gastosapp.R
 import com.google.android.material.textfield.TextInputEditText
 import java.util.Calendar
@@ -33,7 +33,7 @@ class FragmentAgregarPresupuesto : DialogFragment() {
     }
 
     interface PresupuestoGuardadoListener {
-        fun onPresupuestoGuardado(presupuesto: Presupuestos)
+        fun onPresupuestoGuardado(presupuesto: Presupuesto)
     }
 
     override fun onCreateView(
@@ -152,7 +152,7 @@ class FragmentAgregarPresupuesto : DialogFragment() {
         println("   Fecha Inicio: $fechaInicio")
         println("   Fecha Final: $fechaFinal")
 
-        val presupuesto = Presupuestos(nombre, cantidad, fechaInicio, fechaFinal)
+        val presupuesto = Presupuesto(nombre, cantidad, fechaInicio, fechaFinal)
         println("DEBUG: Objeto Presupuesto creado")
 
         // Verificar y llamar al listener

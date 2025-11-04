@@ -3,16 +3,17 @@ package com.example.gastosapp.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.gastosapp.Models.Presupuestos
+import com.example.gastosapp.Models.Presupuesto
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlin.collections.toMutableList
 
 class PresupuestoViewModel : ViewModel() {
 
-    private val _listaPresupuestos = MutableLiveData<List<Presupuestos>>(emptyList())
-    val presupuestos: LiveData<List<Presupuestos>> get() = _listaPresupuestos
+    private val _listaPresupuestos = MutableLiveData<List<Presupuesto>>(emptyList())
+    val presupuestos: LiveData<List<Presupuesto>> get() = _listaPresupuestos
 
     private val database = FirebaseDatabase.getInstance().reference.child("presupuestos")
 
@@ -24,9 +25,9 @@ class PresupuestoViewModel : ViewModel() {
     private fun cargarPresupuestosDesdeFirebase() {
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val presupuestosList = mutableListOf<Presupuestos>()
+                val presupuestosList = mutableListOf<Presupuesto>()
                 for (childSnapshot in snapshot.children) {
-                    val presupuesto = childSnapshot.getValue(Presupuestos::class.java)
+                    val presupuesto = childSnapshot.getValue(Presupuesto::class.java)
                     presupuesto?.id = childSnapshot.key // Asegura que el ID se asigne
                     presupuesto?.let { presupuestosList.add(it) }
                 }
@@ -43,7 +44,7 @@ class PresupuestoViewModel : ViewModel() {
         })
     }
 
-    fun agregarPresupuesto(presupuesto: Presupuestos) {
+    fun agregarPresupuesto(presupuesto: Presupuesto) {
         val currentList = _listaPresupuestos.value?.toMutableList() ?: mutableListOf()
         val presupuestoId = database.push().key ?: return
         //presupuesto.id = presupuestoId
