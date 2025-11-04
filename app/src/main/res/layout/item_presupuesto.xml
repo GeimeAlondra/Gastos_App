@@ -128,9 +128,18 @@
                 android:drawablePadding="4dp" />
 
             <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/btnEditar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:lottie_rawRes="@raw/editpresupuesto"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="Editar presupuesto"/>
+
+            <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/btnEliminar"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
                 app:lottie_rawRes="@raw/deletepresupuesto"
                 android:background="?attr/selectableItemBackground"
                 android:contentDescription="Eliminar presupuesto" />
