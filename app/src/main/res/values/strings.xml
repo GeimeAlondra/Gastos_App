@@ -13,7 +13,7 @@
     <!-- MainActivity -->
     <string name="titulo">CashControl</string>
     <string name="descripcion">CashControl te ayuda a registrar y gestionar tus gastos diarios de forma sencilla y rápida. Visualiza tus ingresos, categoriza tus gastos y descubre patrones para ahorrar más.</string>
-    <string name="btn_empezar">Empezar</string>
+    <string name="btn_empezar">Iniciar Sesion</string>
     <string name="btn_registrarse">Registrarse</string>
 
     <!-- LoginActivity -->
@@ -48,6 +48,5 @@
     <string name="tv_cerrarSesion">Cerrar Sesion</string>
 
     <!-- id fragment Presupuesto -->
-
 
 </resources>

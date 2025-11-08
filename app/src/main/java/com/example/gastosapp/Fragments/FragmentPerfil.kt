@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.example.gastosapp.LoginActivity
+import com.example.gastosapp.MainActivity
 import com.example.gastosapp.Models.Registro
 import com.example.gastosapp.R
 import com.example.gastosapp.databinding.FragmentPerfilBinding
@@ -81,7 +83,7 @@ class FragmentPerfil : Fragment() {
         val googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         googleSignInClient.signOut()
 
-        val intent = Intent(requireActivity(), LoginActivity::class.java)
+        val intent = Intent(requireActivity(), MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         requireActivity().finish()

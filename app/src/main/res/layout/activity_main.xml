@@ -6,23 +6,21 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/cremaClaro"
+    android:background="@drawable/background_main"
+    tools:context=".MainActivity"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
         >
 
         <com.airbnb.lottie.LottieAnimationView
@@ -31,7 +29,7 @@
             android:layout_height="200dp"
             android:clickable="true"
             android:focusable="true"
-            app:lottie_rawRes="@raw/oink_cash"
+            app:lottie_rawRes="@raw/icon_main"
             app:lottie_autoPlay="true"
             app:lottie_loop="false"
             app:layout_constraintTop_toTopOf="parent"
@@ -46,17 +44,21 @@
             android:layout_marginTop="20dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:backgroundTint="@color/blanco"
             app:cardElevation="20dp"
             app:cardCornerRadius="19dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:cardBackgroundColor="@color/blanco"
             app:layout_constraintTop_toBottomOf="@id/animationCash"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:clickable="true"
+            android:focusable="true"
             >
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cardContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="16dp"
                 >
 
                 <!-- Título -->
@@ -64,16 +66,14 @@
                     android:id="@+id/tv_CashControl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginBottom="10dp"
                     android:text="@string/app_name"
                     android:textAlignment="center"
                     android:textSize="23sp"
                     android:textStyle="bold"
                     android:textColor="@color/negro"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     />
 
                 <!-- Descripción -->
@@ -89,10 +89,11 @@
                     android:textColor="@color/negro"
                     android:textAlignment="center"
                     android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@id/tv_CashControl"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -125,7 +126,8 @@
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:textStyle="bold"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="12dp"
+                />
 
             <!-- Registrarse -->
             <com.google.android.material.button.MaterialButton
@@ -144,5 +146,3 @@
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
