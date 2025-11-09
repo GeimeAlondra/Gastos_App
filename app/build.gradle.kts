@@ -51,6 +51,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-database")
+    implementation ("com.google.firebase:firebase-database-ktx:20.3.0")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
@@ -61,13 +62,13 @@ dependencies {
 
     implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.29")
 
-    //    Animaciones LottiFiles
+    // Animaciones LottiFiles
     implementation("com.airbnb.android:lottie:5.0.3")
-
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
+    implementation(libs.androidx.lifecycle.viewmodel.android)
 
     implementation("com.google.code.gson:gson:2.10.1")
 

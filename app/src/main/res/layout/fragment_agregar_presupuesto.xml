@@ -40,13 +40,13 @@
             <!-- Nombre del gasto -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etNombreGasto"
+                    android:id="@+id/etNombrePresupuesto"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:hint="Nombre del gasto"
                     android:textColor="@color/negro"/>
 
@@ -55,16 +55,33 @@
             <!-- Cantidad -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etCantidad"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:hint="Cantidad"
                     android:textColor="@color/negro"
                     android:inputType="numberDecimal" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Categoría -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="24dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+
+                <AutoCompleteTextView
+                    android:id="@+id/etCategoria"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:hint="Categoría"
+                    android:inputType="none"
+                    android:textColor="@color/negro"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,7 +110,7 @@
                     android:backgroundTint="@color/celeste" />
 
                 <TextView
-                    android:id="@+id/tvFechaInicio"
+                    android:id="@+id/etFechaInicio"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -128,7 +145,7 @@
                     android:backgroundTint="@color/celeste" />
 
                 <TextView
-                    android:id="@+id/tvFechaFinal"
+                    android:id="@+id/etFechaFinal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
