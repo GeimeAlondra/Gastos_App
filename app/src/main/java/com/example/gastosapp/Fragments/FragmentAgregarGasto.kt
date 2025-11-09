@@ -45,6 +45,11 @@ class FragmentAgregarGasto : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         rootView = inflater.inflate(R.layout.fragment_agregar_gasto, container, false)
+
+        // ELIMINAR EL FONDO DEL DIÁLOGO PARA VER LAS ESQUINAS REDONDAS
+        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog?.window?.setDimAmount(0.3f) // Opcional: oscurecimiento del fondo
+
         initViews()
         configurarCategoria()
         configurarSelectorFecha()

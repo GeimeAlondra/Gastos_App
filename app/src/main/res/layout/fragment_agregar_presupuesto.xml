@@ -7,11 +7,13 @@
     android:gravity="center"
     android:orientation="vertical"
     android:background="@android:color/transparent"
-    android:padding="20dp">
+    android:overScrollMode="never"
+    android:fadingEdgeLength="0dp"
+    android:requiresFadingEdge="none">
 
-    <androidx.cardview.widget.CardView
+<androidx.cardview.widget.CardView
         android:id="@+id/cardView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="16dp"
         app:cardBackgroundColor="#FFFFFF"
@@ -24,8 +26,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#FFFFFF"
-            android:padding="24dp">
+            android:padding="24dp"
+            android:background="@android:color/transparent">
 
             <TextView
                 android:layout_width="match_parent"
@@ -37,53 +39,40 @@
                 android:textColor="@color/negro"
                 android:layout_marginBottom="20dp" />
 
-            <!-- Nombre del gasto -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginBottom="16dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etNombrePresupuesto"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:hint="Nombre del gasto"
-                    android:textColor="@color/negro"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Cantidad -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginBottom="16dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etCantidad"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:hint="Cantidad"
-                    android:textColor="@color/negro"
-                    android:inputType="numberDecimal" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
             <!-- Categoría -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
 
                 <AutoCompleteTextView
                     android:id="@+id/etCategoria"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     android:hint="Categoría"
                     android:inputType="none"
                     android:textColor="@color/negro"/>
 
             </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Cantidad -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCantidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Cantidad"
+                    android:textColor="@color/negro"
+                    android:inputType="numberDecimal" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <!-- Fecha de Inicio -->
             <LinearLayout

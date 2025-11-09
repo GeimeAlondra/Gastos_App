@@ -171,6 +171,8 @@ class GastoViewModel : ViewModel() {
         ajustarPresupuesto(uid, categoriaId, monto, callback)
     }
 
+    // En GastoViewModel.kt
+
     private fun ajustarPresupuesto(uid: String, categoriaId: Int, ajuste: Double, callback: (Boolean, String?) -> Unit) {
         try {
             val ref = FirebaseDatabase.getInstance().reference.child("presupuestos").child(uid)
@@ -178,27 +180,44 @@ class GastoViewModel : ViewModel() {
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if (!snapshot.exists()) {
+                            // Esto es correcto, si no hay presupuesto, no se puede gastar
                             callback(false, "No hay presupuesto para esta categoría")
                             return
                         }
 
-                        var aplicado = false
-                        var mensaje = "Operación exitosa"
-
-                        for (child in snapshot.children) {
-                            val p = child.getValue(Presupuesto::class.java) ?: continue
-                            val nuevoSaldo = p.cantidad + ajuste
-
-                            if (nuevoSaldo >= 0 || ajuste > 0) {
-                                child.ref.child("cantidad").setValue(nuevoSaldo)
-                                aplicado = true
-                                mensaje = "Saldo: $${String.format("%.2f", nuevoSaldo)}"
-                                break
-                            } else {
-                                mensaje = "Saldo insuficiente"
-                            }
+                        // Asumimos que solo hay un presupuesto por categoría
+                        val presupuestoSnapshot = snapshot.children.firstOrNull()
+                        if (presupuestoSnapshot == null) {
+                            callback(false, "Error al leer el presupuesto")
+                            return
                         }
-                        callback(aplicado, mensaje)
+
+                        val presupuesto = presupuestoSnapshot.getValue(Presupuesto::class.java)
+                        if (presupuesto == null) {
+                            callback(false, "Error al parsear el presupuesto")
+                            return
+                        }
+
+                        // --- INICIO DE LA LÓGICA MODIFICADA ---
+                        val nuevoMontoGastado = presupuesto.montoGastado + ajuste
+
+                        // Si el ajuste es negativo (descontar), verificamos si hay fondos
+                        if (ajuste < 0 && nuevoMontoGastado > presupuesto.cantidad) {
+                            callback(false, "Saldo insuficiente en el presupuesto")
+                            return
+                        }
+
+                        // Actualizamos solo el campo 'montoGastado'
+                        presupuestoSnapshot.ref.child("montoGastado").setValue(nuevoMontoGastado)
+                            .addOnSuccessListener {
+                                val montoRestante = presupuesto.cantidad - nuevoMontoGastado
+                                val mensaje = "Presupuesto actualizado. Restante: $${String.format("%.2f", montoRestante)}"
+                                callback(true, mensaje)
+                            }
+                            .addOnFailureListener {
+                                callback(false, "Error al actualizar el presupuesto en Firebase")
+                            }
+                        // --- FIN DE LA LÓGICA MODIFICADA ---
                     }
 
                     override fun onCancelled(error: DatabaseError) {
@@ -211,6 +230,7 @@ class GastoViewModel : ViewModel() {
             callback(false, "Error interno")
         }
     }
+
 
     // === REVERTIR ===
     private fun revertirGasto(uid: String, id: String, lista: MutableList<Gasto>, gasto: Gasto) {

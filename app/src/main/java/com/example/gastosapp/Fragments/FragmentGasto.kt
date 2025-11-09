@@ -11,6 +11,7 @@ import com.example.gastosapp.Models.Categorias
 import com.example.gastosapp.Models.Gasto
 import com.example.gastosapp.R
 import com.example.gastosapp.viewModels.GastoViewModel
+import com.example.gastosapp.viewModels.PresupuestoViewModel
 
 class FragmentGasto : Fragment() {
 
@@ -18,10 +19,19 @@ class FragmentGasto : Fragment() {
     private lateinit var contenedorGastos: LinearLayout
     private lateinit var botonAgregar: LottieAnimationView
 
+    private lateinit var gastoViewModel: GastoViewModel
+
+    private lateinit var presupuestoViewModel: PresupuestoViewModel // Para obtener las categorías
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vm = ViewModelProvider(this)[GastoViewModel::class.java]
+        gastoViewModel = ViewModelProvider(requireActivity())[GastoViewModel::class.java]
+        presupuestoViewModel = ViewModelProvider(requireActivity())[PresupuestoViewModel::class.java]
     }
+
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val vista = inflater.inflate(R.layout.fragment_gasto, container, false)
@@ -39,6 +49,31 @@ class FragmentGasto : Fragment() {
         }
 
         return vista
+    }
+
+    private fun abrirDialogoAgregarGasto() {
+        val dialog = FragmentAgregarGasto()
+
+        // Obtener las categorías con presupuesto activo desde el PresupuestoViewModel
+        val categoriasConPresupuesto = presupuestoViewModel.presupuestos.value
+            ?.filter { it.cantidad > it.montoGastado } // Categorías con saldo restante
+            ?.map { Categorias.getNombrePorId(it.categoriaId) }
+            ?.distinct()
+            ?: listOf()
+
+        dialog.arguments = Bundle().apply {
+            putStringArrayList("categorias_validas", ArrayList(categoriasConPresupuesto))
+        }
+
+        dialog.setGastoGuardadoListener(object : FragmentAgregarGasto.GastoGuardadoListener {
+            override fun onGastoGuardado(gasto: Gasto) {
+                // Llamamos a la función del GastoViewModel
+                gastoViewModel.agregarGasto(gasto) { exito, mensaje ->
+                    Toast.makeText(context, mensaje, Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+        dialog.show(parentFragmentManager, "agregarGasto")
     }
 
     private fun mostrarDialogoAgregarGasto() {

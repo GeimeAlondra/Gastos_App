@@ -15,6 +15,10 @@ import com.example.gastosapp.Models.Categorias
 import com.example.gastosapp.Models.Presupuesto
 import com.example.gastosapp.R
 import com.example.gastosapp.viewModels.PresupuestoViewModel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class FragmentPresupuesto : Fragment() {
 
@@ -41,8 +45,17 @@ class FragmentPresupuesto : Fragment() {
         return view
     }
 
+    /**
+     * Obtiene las categorías de los presupuestos activos y abre el diálogo para agregar.
+     */
     private fun abrirAgregar() {
         val dialog = FragmentAgregarPresupuesto().apply {
+            // 1. Obtener y pasar las categorías ocupadas
+            arguments = Bundle().apply {
+                putStringArrayList("categorias_ocupadas", ArrayList(obtenerCategoriasOcupadas()))
+            }
+
+            // 2. Configurar el listener para guardar el nuevo presupuesto
             setPresupuestoGuardadoListener(object : FragmentAgregarPresupuesto.PresupuestoGuardadoListener {
                 override fun onPresupuestoGuardado(p: Presupuesto) {
                     viewModel.agregarPresupuesto(p)
@@ -50,6 +63,73 @@ class FragmentPresupuesto : Fragment() {
             })
         }
         dialog.show(parentFragmentManager, "agregar")
+    }
+
+    /**
+     * Abre el diálogo para editar un presupuesto existente, pasando las categorías ocupadas
+     * (excluyendo la del presupuesto que se está editando).
+     */
+    private fun abrirEdicion(p: Presupuesto) {
+        val dialog = FragmentAgregarPresupuesto().apply {
+            // 1. Obtener y pasar las categorías ocupadas (excluyendo la actual)
+            arguments = Bundle().apply {
+                putStringArrayList("categorias_ocupadas", ArrayList(obtenerCategoriasOcupadas(p.id)))
+            }
+
+            // 2. Configurar el presupuesto a editar y el listener de edición
+            setPresupuestoAEditar(p, object : FragmentAgregarPresupuesto.PresupuestoEditadoListener {
+                override fun onPresupuestoEditado(editado: Presupuesto) {
+                    val pos = viewModel.getPositionById(editado.id!!)
+                    if (pos != -1) viewModel.editarPresupuesto(editado, pos)
+                }
+            })
+        }
+        dialog.show(parentFragmentManager, "editar")
+    }
+
+    /**
+     * Revisa la lista actual de presupuestos y devuelve los nombres de las categorías
+     * que pertenecen a presupuestos activos.
+     * @param excluirIdPresupuesto Opcional. Si se provee, la categoría de este presupuesto será ignorada. Útil para el modo edición.
+     * @return Una lista de nombres de categorías que ya están en uso.
+     */
+    private fun obtenerCategoriasOcupadas(excluirIdPresupuesto: String? = null): List<String> {
+        val categoriasOcupadas = mutableListOf<String>()
+        val formatoFecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val hoyCalendar = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val fechaHoy = hoyCalendar.time
+
+        // Usamos la lista de presupuestos actual del ViewModel
+        val listaActual = viewModel.presupuestos.value ?: emptyList()
+
+        for (presupuesto in listaActual) {
+            // Si estamos editando, saltamos el presupuesto actual en la comprobación
+            if (presupuesto.id == excluirIdPresupuesto) {
+                continue
+            }
+
+            val fechaFinalStr = presupuesto.fechaFinal
+            if (fechaFinalStr != null) {
+                try {
+                    val fechaFinal = formatoFecha.parse(fechaFinalStr)
+                    // Si la fecha final del presupuesto es hoy o en el futuro, está activo
+                    if (fechaFinal != null && !fechaFinal.before(fechaHoy)) {
+                        val nombreCategoria = Categorias.getNombrePorId(presupuesto.categoriaId)
+                        if (nombreCategoria.isNotEmpty()) {
+                            categoriasOcupadas.add(nombreCategoria)
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace() // Error de formato de fecha
+                }
+            }
+        }
+        return categoriasOcupadas
     }
 
     private fun actualizarUI(lista: List<Presupuesto>) {
@@ -81,17 +161,5 @@ class FragmentPresupuesto : Fragment() {
             Toast.makeText(context, "Eliminado", Toast.LENGTH_SHORT).show()
         }
         return v
-    }
-
-    private fun abrirEdicion(p: Presupuesto) {
-        val dialog = FragmentAgregarPresupuesto().apply {
-            setPresupuestoAEditar(p, object : FragmentAgregarPresupuesto.PresupuestoEditadoListener {
-                override fun onPresupuestoEditado(editado: Presupuesto) {
-                    val pos = viewModel.getPositionById(editado.id!!)
-                    if (pos != -1) viewModel.editarPresupuesto(editado, pos)
-                }
-            })
-        }
-        dialog.show(parentFragmentManager, "editar")
     }
 }
