@@ -45,10 +45,25 @@ class BarChartView @JvmOverloads constructor(
      * Establece los datos para el gráfico
      * @param newData Lista de pares (etiqueta, valor)
      */
+    /**
+     * Establece los datos para el gráfico
+     * @param newData Lista de pares (etiqueta, valor)
+     */
     fun setData(newData: List<Pair<String, Float>>) {
         data = newData
         // Calcular el valor máximo para escalar las barras
-        maxValue = if (data.isNotEmpty()) data.maxOf { it.second } * 1.1f else 1f
+        maxValue = if (data.isNotEmpty()) {
+            val rawMax = data.maxOf { it.second }
+            // Redondear hacia arriba para una escala más limpia
+            when {
+                rawMax == 0f -> 1f
+                rawMax < 10f -> rawMax * 1.5f
+                rawMax < 100f -> Math.ceil((rawMax * 1.2).toDouble()).toFloat()
+                else -> Math.ceil((rawMax * 1.1).toDouble()).toFloat()
+            }
+        } else {
+            1f
+        }
         // Redibujar el view
         invalidate()
     }
@@ -101,38 +116,96 @@ class BarChartView @JvmOverloads constructor(
     /**
      * Dibuja las barras del gráfico CON ESPACIADO
      */
-    private fun drawBars(canvas: Canvas) {
-        // Espacio total disponible para barras (con márgenes)
-        val totalWidthForBars = width - 80f
-        val barWidth = totalWidthForBars / data.size.toFloat()
+    /**
+     * Dibuja los ejes X e Y CON MÁS ESPACIO SUPERIOR
+     */
+    private fun drawAxes(canvas: Canvas) {
+        // AUMENTAR márgenes superiores e inferiores
+        val topMargin = 80f  // Más espacio arriba
+        val bottomMargin = 100f  // Más espacio abajo
+        val leftMargin = 50f
+        val rightMargin = 40f
 
-        // Calcular el ancho real de cada barra (considerando el espaciado)
+        val chartHeight = height - topMargin - bottomMargin
+        val chartWidth = width - leftMargin - rightMargin
+
+        // Eje Y (vertical)
+        canvas.drawLine(leftMargin, height - bottomMargin, leftMargin, topMargin, axisPaint)
+
+        // Eje X (horizontal)
+        canvas.drawLine(leftMargin, height - bottomMargin, width - rightMargin, height - bottomMargin, axisPaint)
+
+        // Marcas en el eje Y
+        if (maxValue > 0) {
+            textPaint.textSize = 18f
+            textPaint.color = Color.GRAY
+            textPaint.textAlign = Paint.Align.RIGHT
+
+            val valorMaximoReal = maxValue / 1.1f
+
+            // Dibujar marcas en el eje Y
+            for (i in 0..3) {
+                val porcentaje = i * 0.25f
+                val valor = valorMaximoReal * porcentaje
+                val yPos = height - bottomMargin - (chartHeight * porcentaje)
+
+                // Línea horizontal de guía
+                axisPaint.color = Color.LTGRAY
+                axisPaint.strokeWidth = 1f
+                canvas.drawLine(leftMargin, yPos, width - rightMargin, yPos, axisPaint)
+                axisPaint.color = Color.GRAY
+                axisPaint.strokeWidth = 2f
+
+                // Texto del valor - CON MÁS MARGEN IZQUIERDO
+                if (i > 0) {
+                    canvas.drawText("$${String.format("%.0f", valor)}", leftMargin - 10f, yPos + 6f, textPaint)
+                }
+            }
+
+            // Valor máximo en la parte superior - CON MÁS ESPACIO
+            canvas.drawText("$${String.format("%.0f", valorMaximoReal)}", leftMargin - 10f, topMargin - 10f, textPaint)
+
+            textPaint.textAlign = Paint.Align.CENTER
+        }
+    }
+
+    /**
+     * Dibuja las barras del gráfico CON NUEVOS MÁRGENES
+     */
+    private fun drawBars(canvas: Canvas) {
+        val topMargin = 80f
+        val bottomMargin = 100f
+        val leftMargin = 50f
+        val rightMargin = 40f
+
+        val chartWidth = width - leftMargin - rightMargin
+        val chartHeight = height - topMargin - bottomMargin
+
+        val barWidth = chartWidth / data.size.toFloat()
         val actualBarWidth = barWidth * (1f - barSpacing)
         val spacingWidth = barWidth * barSpacing
 
-        val maxBarHeight = height - 120f
-
         data.forEachIndexed { index, (label, value) ->
-            // Calcular altura de la barra proporcional al valor máximo
-            val barHeight = (value / maxValue) * maxBarHeight
+            // Calcular altura de la barra
+            val barHeight = (value / (maxValue / 1.1f)) * chartHeight
 
-            // Calcular posición de la barra CON ESPACIADO
-            val left = 40f + (index * barWidth) + (spacingWidth / 2)
-            val top = height - 80f - barHeight
+            // Calcular posición de la barra CON NUEVOS MÁRGENES
+            val left = leftMargin + (index * barWidth) + (spacingWidth / 2)
+            val top = height - bottomMargin - barHeight
             val right = left + actualBarWidth * barWidthFactor
-            val bottom = height - 80f
+            val bottom = height - bottomMargin
 
             // Dibujar barra
             canvas.drawRect(left, top, right, bottom, barPaint)
 
-            // Dibujar valor encima de la barra (solo si es mayor a 0)
-            if (value > 0) {
-                textPaint.textSize = 28f
+            // Dibujar valor encima de la barra
+            if (value > 0 && barHeight > 40f) {
+                textPaint.textSize = 20f
                 textPaint.color = Color.BLACK
                 canvas.drawText(
                     "$${String.format("%.0f", value)}",
                     (left + right) / 2,
-                    top - 15f,
+                    top - 10f,
                     textPaint
                 )
             }
@@ -140,40 +213,24 @@ class BarChartView @JvmOverloads constructor(
     }
 
     /**
-     * Dibuja las etiquetas en el eje X (ajustado para el espaciado)
+     * Dibuja las etiquetas en el eje X CON NUEVOS MÁRGENES
      */
     private fun drawLabels(canvas: Canvas) {
-        val totalWidthForBars = width - 80f
-        val barWidth = totalWidthForBars / data.size.toFloat()
+        val topMargin = 80f
+        val bottomMargin = 100f
+        val leftMargin = 50f
+        val rightMargin = 40f
+
+        val chartWidth = width - leftMargin - rightMargin
+        val barWidth = chartWidth / data.size.toFloat()
 
         data.forEachIndexed { index, (label, value) ->
-            // Centrar la etiqueta en el espacio de la barra + espaciado
-            val x = 40f + (index * barWidth) + (barWidth / 2)
-            val y = height - 40f
+            val x = leftMargin + (index * barWidth) + (barWidth / 2)
+            val y = height - (bottomMargin / 2)  // Centrado en el espacio inferior
 
-            textPaint.textSize = 30f
+            textPaint.textSize = 22f  // Texto un poco más grande
             textPaint.color = Color.BLACK
             canvas.drawText(label, x, y, textPaint)
-        }
-    }
-
-    /**
-     * Dibuja los ejes X e Y
-     */
-    private fun drawAxes(canvas: Canvas) {
-        // Eje Y (vertical) - más delgado
-        canvas.drawLine(40f, height - 80f, 40f, 60f, axisPaint)
-
-        // Eje X (horizontal) - más delgado
-        canvas.drawLine(40f, height - 80f, width - 40f, height - 80f, axisPaint)
-
-        // Marca en el máximo valor
-        if (maxValue > 0) {
-            textPaint.textSize = 24f  // Texto más pequeño
-            textPaint.color = Color.GRAY
-            textPaint.textAlign = Paint.Align.RIGHT
-            canvas.drawText("$${String.format("%.0f", maxValue)}", 35f, 50f, textPaint)
-            textPaint.textAlign = Paint.Align.CENTER
         }
     }
 
