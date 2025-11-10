@@ -70,9 +70,17 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
     implementation(libs.androidx.lifecycle.viewmodel.android)
 
+
+    // Para gráficos
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+
+
+
     implementation("com.google.code.gson:gson:2.10.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+// También asegúrate de tener esto en el repositorio:
