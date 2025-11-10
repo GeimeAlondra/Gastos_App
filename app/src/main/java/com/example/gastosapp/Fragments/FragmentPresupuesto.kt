@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
@@ -146,6 +147,7 @@ class FragmentPresupuesto : Fragment() {
         lista.forEachIndexed { i, p -> container.addView(crearItem(p, i)) }
     }
 
+    // En FragmentPresupuesto.kt - MODIFICA el método crearItem
     private fun crearItem(p: Presupuesto, pos: Int): View {
         val v = LayoutInflater.from(context).inflate(R.layout.item_presupuesto, container, false)
 
@@ -155,11 +157,25 @@ class FragmentPresupuesto : Fragment() {
         v.findViewById<TextView>(R.id.tvFechaFinal).text = p.fechaFinal
         v.findViewById<TextView>(R.id.tvCategoria).text = Categorias.getNombrePorId(p.categoriaId)
 
+        // NUEVO: Mostrar el saldo disponible
+        val saldoDisponible = p.cantidad - p.montoGastado
+        v.findViewById<TextView>(R.id.tvSaldoDisponible).text =
+            String.format("Saldo disponible: $%.2f", saldoDisponible)
+
+        // Cambiar color según el saldo
+        val tvSaldo = v.findViewById<TextView>(R.id.tvSaldoDisponible)
+        if (saldoDisponible < 0) {
+            tvSaldo.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark))
+        } else if (saldoDisponible < p.cantidad * 0.2) {
+            tvSaldo.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_orange_dark))
+        } else {
+            tvSaldo.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_green_dark))
+        }
+
         v.findViewById<View>(R.id.btnEditar)?.setOnClickListener { abrirEdicion(p) }
         v.findViewById<View>(R.id.btnEliminar)?.setOnClickListener {
             viewModel.eliminarPresupuesto(pos)
             Toast.makeText(context, "Eliminado", Toast.LENGTH_SHORT).show()
         }
         return v
-    }
-}
+    }}

@@ -77,16 +77,28 @@ class FragmentGasto : Fragment() {
     }
 
     private fun mostrarDialogoAgregarGasto() {
-        FragmentAgregarGasto().apply {
-            setGastoGuardadoListener(object : FragmentAgregarGasto.GastoGuardadoListener {
-                override fun onGastoGuardado(gasto: Gasto) {
-                    vm.agregarGasto(gasto) { exito, mensaje ->
-                        val msg = if (exito) "Gasto agregado" else mensaje ?: "Error"
-                        Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
-                    }
+        val dialog = FragmentAgregarGasto()
+
+        // Obtener las categorías con presupuesto activo
+        val categoriasConPresupuesto = presupuestoViewModel.presupuestos.value
+            ?.filter { it.cantidad > it.montoGastado } // Categorías con saldo
+            ?.map { Categorias.getNombrePorId(it.categoriaId) }
+            ?.distinct()
+            ?: listOf()
+
+        dialog.arguments = Bundle().apply {
+            putStringArrayList("categorias_validas", ArrayList(categoriasConPresupuesto))
+        }
+
+        dialog.setGastoGuardadoListener(object : FragmentAgregarGasto.GastoGuardadoListener {
+            override fun onGastoGuardado(gasto: Gasto) {
+                vm.agregarGasto(gasto) { exito, mensaje ->
+                    val msg = if (exito) "Gasto agregado" else mensaje ?: "Error"
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
                 }
-            })
-        }.show(parentFragmentManager, "agregar_gasto")
+            }
+        })
+        dialog.show(parentFragmentManager, "agregar_gasto")
     }
 
     private fun actualizarListaGastos(lista: List<Gasto>) {

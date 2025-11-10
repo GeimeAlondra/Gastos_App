@@ -80,10 +80,21 @@ class FragmentAgregarGasto : DialogFragment() {
     }
 
     private fun configurarCategoria() {
-        val nombres = Categorias.lista.map { it.nombre }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, nombres)
+        // Obtener categorías válidas desde arguments o usar todas
+        val categoriasParaMostrar = arguments?.getStringArrayList("categorias_validas")
+            ?: Categorias.lista.map { it.nombre }
+
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, categoriasParaMostrar)
         etCategoriaGasto.setAdapter(adapter)
-        etCategoriaGasto.setText(nombres[8], false) // "Otros"
+
+        // Establecer valor por defecto solo si hay categorías disponibles
+        if (categoriasParaMostrar.isNotEmpty()) {
+            val categoriaDefecto = if ("Otros" in categoriasParaMostrar) "Otros" else categoriasParaMostrar[0]
+            etCategoriaGasto.setText(categoriaDefecto, false)
+        } else {
+            etCategoriaGasto.setText("No hay categorías disponibles", false)
+            etCategoriaGasto.isEnabled = false
+        }
     }
 
     private fun configurarSelectorFecha() {
@@ -135,7 +146,15 @@ class FragmentAgregarGasto : DialogFragment() {
         val nombre = etNombreGasto.text.toString().trim()
         val monto = etCantidadGasto.text.toString().toDouble()
         val descripcion = etDescripcionGasto.text.toString().trim().ifEmpty { null }
-        val categoriaId = Categorias.getIdPorNombre(etCategoriaGasto.text.toString())
+        val categoriaNombre = etCategoriaGasto.text.toString()
+        val categoriaId = Categorias.getIdPorNombre(categoriaNombre)
+
+        // Validar que la categoría esté en la lista de válidas (si se proporcionó)
+        val categoriasValidas = arguments?.getStringArrayList("categorias_validas")
+        if (categoriasValidas != null && categoriaNombre !in categoriasValidas) {
+            Toast.makeText(requireContext(), "No hay presupuesto disponible para esta categoría", Toast.LENGTH_LONG).show()
+            return
+        }
 
         val gasto = if (gastoAEditar != null) {
             gastoAEditar!!.copy(
