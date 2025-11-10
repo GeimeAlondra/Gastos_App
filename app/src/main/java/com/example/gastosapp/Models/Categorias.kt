@@ -5,13 +5,12 @@ object Categorias {
     val lista = listOf(
         Categoria(1, "Alimentación"),
         Categoria(2, "Transporte"),
-        Categoria(3, "Comida"),
-        Categoria(4, "Entretenimiento"),
-        Categoria(5, "Salud"),
-        Categoria(6, "Educación"),
-        Categoria(7, "Compras"),
-        Categoria(8, "Hogar"),
-        Categoria(9, "Otros")
+        Categoria(3, "Entretenimiento"),
+        Categoria(4, "Salud"),
+        Categoria(5, "Educación"),
+        Categoria(6, "Compras"),
+        Categoria(7, "Hogar"),
+        Categoria(8, "Otros")
     )
 
     fun getNombrePorId(id: Int): String {

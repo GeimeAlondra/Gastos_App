@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.android)
 
 
+
     // Para gráficos
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
