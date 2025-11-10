@@ -16,6 +16,7 @@ import com.example.gastosapp.viewModels.GastoViewModel
 import com.example.gastosapp.viewModels.PresupuestoViewModel
 import java.text.SimpleDateFormat
 import java.util.*
+import com.example.gastosapp.views.BarChartView
 
 class FragmentResumen : Fragment() {
 
@@ -27,6 +28,10 @@ class FragmentResumen : Fragment() {
     private lateinit var tvPresupuestoTotal: TextView
     private lateinit var tvGastadoTotal: TextView
     private lateinit var containerCategorias: LinearLayout
+
+    private lateinit var chartDiario: BarChartView
+    private lateinit var chartSemanal: BarChartView
+    private lateinit var chartMensual: BarChartView
 
     companion object {
         private const val TAG = "FragmentResumen"
@@ -59,6 +64,10 @@ class FragmentResumen : Fragment() {
         tvPresupuestoTotal = view.findViewById(R.id.tvPresupuestoTotal)
         tvGastadoTotal = view.findViewById(R.id.tvGastadoTotal)
         containerCategorias = view.findViewById(R.id.containerCategorias)
+
+        chartDiario = view.findViewById(R.id.chartDiario)
+        chartSemanal = view.findViewById(R.id.chartSemanal)
+        chartMensual = view.findViewById(R.id.chartMensual)
     }
 
     private fun setupObservers() {
@@ -67,7 +76,8 @@ class FragmentResumen : Fragment() {
         gastoViewModel.gastos.observe(viewLifecycleOwner) { gastos ->
             Log.d(TAG, "  Gastos actualizados: ${gastos.size} gastos")
             actualizarResumenSemanal(gastos)
-            actualizarResumenCategorias(gastos) // NUEVA LÍNEA
+            actualizarResumenCategorias(gastos)
+            actualizarGraficas(gastos)
         }
 
         presupuestoViewModel.presupuestos.observe(viewLifecycleOwner) { presupuestos ->
@@ -207,5 +217,222 @@ class FragmentResumen : Fragment() {
         }
     }
 
+    private fun actualizarGraficas(gastos: List<com.example.gastosapp.Models.Gasto>) {
+        try {
+            actualizarGraficaDiaria(gastos)
+            actualizarGraficaSemanal(gastos)
+            actualizarGraficaMensual(gastos)
+            Log.d(TAG, "✅ Gráficas actualizadas")
+        } catch (e: Exception) {
+            Log.e(TAG, "❌ Error actualizando gráficas: ${e.message}")
+        }
+    }
 
+    // NUEVO: Gráfica Diaria - Días del mes actual
+// MODIFICADO: Gráfica Diaria - Solo 7 días de la semana actual
+    private fun actualizarGraficaDiaria(gastos: List<com.example.gastosapp.Models.Gasto>) {
+        val gastosSemana = obtenerGastosSemanaActual(gastos)
+
+        // Agrupar por día de la semana
+        val gastosPorDia = mutableMapOf<String, Float>()
+        val diasSemana = listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
+
+        // Inicializar todos los días en 0
+        diasSemana.forEach { dia ->
+            gastosPorDia[dia] = 0f
+        }
+
+        // Sumar gastos por día
+        gastosSemana.forEach { gasto ->
+            val dia = obtenerDiaDeLaSemana(gasto.fecha)
+            gastosPorDia[dia] = gastosPorDia.getOrDefault(dia, 0f) + gasto.monto.toFloat()
+        }
+
+        // Crear datos para el BarChartView
+        val datosDiarios = diasSemana.map { dia ->
+            Pair(dia, gastosPorDia[dia] ?: 0f)
+        }
+
+        chartDiario.setData(datosDiarios)
+        chartDiario.setTextSize(20f)
+        chartDiario.setBarSpacing(0.15f)
+        Log.d(TAG, "📊 Gráfica diaria actualizada: ${datosDiarios.size} días")
+    }
+    // MODIFICADO: Gráfica Semanal - Semanas del año (1-52)
+// MODIFICADO: Gráfica Semanal - Solo últimas semanas
+    private fun actualizarGraficaSemanal(gastos: List<com.example.gastosapp.Models.Gasto>) {
+        // Agrupar por semana del año
+        val gastosPorSemana = mutableMapOf<Int, Float>()
+
+        // Sumar gastos por semana
+        gastos.forEach { gasto ->
+            val semana = obtenerSemanaDelAnio(gasto.fecha)
+            gastosPorSemana[semana] = gastosPorSemana.getOrDefault(semana, 0f) + gasto.monto.toFloat()
+        }
+
+        // Solo mostrar las últimas 16 semanas con datos
+        val semanaActual = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
+        val semanasRecientes = (semanaActual - 15..semanaActual).filter { it > 0 }
+
+        val datosSemanales = semanasRecientes.map { semana ->
+            Pair("Sem$semana", gastosPorSemana[semana] ?: 0f)
+        }
+
+        chartSemanal.setData(datosSemanales)
+        chartSemanal.setTextSize(16f)
+        chartSemanal.setBarWidthFactor(0.7f)
+        chartSemanal.setBarSpacing(0.1f)
+        Log.d(TAG, "📊 Gráfica semanal actualizada: ${datosSemanales.size} semanas")
+    }
+    // MODIFICADO: Gráfica Mensual - Meses del año
+    private fun actualizarGraficaMensual(gastos: List<com.example.gastosapp.Models.Gasto>) {
+        // Agrupar por mes del año
+        val gastosPorMes = mutableMapOf<String, Float>()
+
+        // Meses del año
+        val mesesAnio = listOf("Ene", "Feb", "Mar", "Abr", "May", "Jun",
+            "Jul", "Ago", "Sep", "Oct", "Nov", "Dic")
+
+        // Inicializar todos los meses
+        mesesAnio.forEach { mes ->
+            gastosPorMes[mes] = 0f
+        }
+
+        // Sumar gastos por mes
+        gastos.forEach { gasto ->
+            val mes = obtenerMesDelAnio(gasto.fecha)
+            if (mes in 1..12) {
+                val claveMes = mesesAnio[mes - 1]
+                gastosPorMes[claveMes] = gastosPorMes.getOrDefault(claveMes, 0f) + gasto.monto.toFloat()
+            }
+        }
+
+        // Crear datos ordenados
+        val datosMensuales = mesesAnio.map { mes ->
+            Pair(mes, gastosPorMes[mes] ?: 0f)
+        }
+
+        chartMensual.setData(datosMensuales)
+        chartMensual.setTextSize(20f)
+        chartMensual.setBarWidthFactor(0.7f)
+        chartDiario.setBarSpacing(0.1f)
+        Log.d(TAG, "📊 Gráfica mensual actualizada: ${datosMensuales.size} meses")
+    }
+
+    // MÉTODOS AUXILIARES NUEVOS
+    private fun obtenerDiasEnMesActual(): List<String> {
+        val calendar = Calendar.getInstance()
+        val diasEnMes = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        return (1..diasEnMes).map { it.toString() }
+    }
+
+    private fun obtenerSemanaDelAnio(fecha: String?): Int {
+        if (fecha.isNullOrEmpty()) return 1
+        return try {
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val date = sdf.parse(fecha)
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            calendar.get(Calendar.WEEK_OF_YEAR)
+        } catch (e: Exception) {
+            1
+        }
+    }
+
+    private fun obtenerMesDelAnio(fecha: String?): Int {
+        if (fecha.isNullOrEmpty()) return 1
+        return try {
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val date = sdf.parse(fecha)
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            calendar.get(Calendar.MONTH) + 1 // 1-12
+        } catch (e: Exception) {
+            1
+        }
+    }
+
+    // MÉTODOS EXISTENTES (los necesitamos para las otras funciones)
+    private fun obtenerGastosSemanaActual(gastos: List<com.example.gastosapp.Models.Gasto>): List<com.example.gastosapp.Models.Gasto> {
+        val calendar = Calendar.getInstance()
+        val semanaActual = calendar.get(Calendar.WEEK_OF_YEAR)
+        val añoActual = calendar.get(Calendar.YEAR)
+
+        return gastos.filter { gasto ->
+            gasto.fecha?.let { fecha ->
+                try {
+                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val fechaGasto = sdf.parse(fecha)
+                    val calGasto = Calendar.getInstance()
+                    calGasto.time = fechaGasto
+
+                    calGasto.get(Calendar.WEEK_OF_YEAR) == semanaActual &&
+                            calGasto.get(Calendar.YEAR) == añoActual
+                } catch (e: Exception) {
+                    false
+                }
+            } ?: false
+        }
+    }
+
+    private fun obtenerGastosMesActual(gastos: List<com.example.gastosapp.Models.Gasto>): List<com.example.gastosapp.Models.Gasto> {
+        val calendar = Calendar.getInstance()
+        val mesActual = calendar.get(Calendar.MONTH)
+        val añoActual = calendar.get(Calendar.YEAR)
+
+        return gastos.filter { gasto ->
+            gasto.fecha?.let { fecha ->
+                try {
+                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val fechaGasto = sdf.parse(fecha)
+                    val calGasto = Calendar.getInstance()
+                    calGasto.time = fechaGasto
+
+                    calGasto.get(Calendar.MONTH) == mesActual &&
+                            calGasto.get(Calendar.YEAR) == añoActual
+                } catch (e: Exception) {
+                    false
+                }
+            } ?: false
+        }
+    }
+
+    private fun obtenerDiaDeLaSemana(fecha: String?): String {
+        if (fecha.isNullOrEmpty()) return "Lun"
+
+        return try {
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val date = sdf.parse(fecha)
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+
+            val diaSemana = calendar.get(Calendar.DAY_OF_WEEK)
+            when (diaSemana) {
+                Calendar.MONDAY -> "Lun"
+                Calendar.TUESDAY -> "Mar"
+                Calendar.WEDNESDAY -> "Mié"
+                Calendar.THURSDAY -> "Jue"
+                Calendar.FRIDAY -> "Vie"
+                Calendar.SATURDAY -> "Sáb"
+                Calendar.SUNDAY -> "Dom"
+                else -> "Lun"
+            }
+        } catch (e: Exception) {
+            "Lun"
+        }
+    }
+
+    private fun obtenerDiaDelMes(fecha: String?): String {
+        if (fecha.isNullOrEmpty()) return "1"
+
+        return try {
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val date = sdf.parse(fecha)
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            calendar.get(Calendar.DAY_OF_MONTH).toString()
+        } catch (e: Exception) {
+            "1"
+        }
+    }
 }
