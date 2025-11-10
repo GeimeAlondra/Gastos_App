@@ -20,6 +20,7 @@ class PresupuestoViewModel : ViewModel() {
         mostrarPresupuestoUsuario()
     }
 
+
     private fun mostrarPresupuestoUsuario() {
         val currentUser = auth.currentUser ?: return
         val uid = currentUser.uid
@@ -32,7 +33,11 @@ class PresupuestoViewModel : ViewModel() {
                 for (child in snapshot.children) {
                     val presupuesto = child.getValue(Presupuesto::class.java)
                     presupuesto?.id = child.key
-                    presupuesto?.let { lista.add(it) }
+                    presupuesto?.let {
+                        // CALCULAR EL SALDO DISPONIBLE CON EL MONTO GASTADO
+                        val saldoDisponible = it.cantidad - it.montoGastado
+                        lista.add(it)
+                    }
                 }
                 _listaPresupuestos.value = lista
             }
@@ -42,7 +47,6 @@ class PresupuestoViewModel : ViewModel() {
             }
         })
     }
-
     fun agregarPresupuesto(presupuesto: Presupuesto) {
         val uid = auth.currentUser?.uid ?: return
         val nuevoId = databaseRef?.push()?.key ?: return
@@ -107,5 +111,9 @@ class PresupuestoViewModel : ViewModel() {
     override fun onCleared() {
         //databaseRef?.removeEventListener { }
         super.onCleared()
+    }
+
+    fun getPresupuestoPorCategoria(categoriaId: Int): Presupuesto? {
+        return _listaPresupuestos.value?.find { it.categoriaId == categoriaId }
     }
 }

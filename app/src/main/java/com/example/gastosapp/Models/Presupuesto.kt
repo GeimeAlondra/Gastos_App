@@ -7,10 +7,10 @@ data class Presupuesto(
     var fechaInicio: String? = null,
     var fechaFinal: String? = null,
     var categoriaId: Int = 9, // 9 = "Otros" por defecto
-    var timestamp: Long = 0L
+    var timestamp: Long = 0L,
+    val montoGastado: Double = 0.0
 ) {
-    constructor() : this(null, null, 0.0, null, null, 9, 0L)
-
+    constructor() : this(null, null, 0.0, null, null, 9, 0L, 0.0)
     constructor(
         nombre: String,
         cantidad: Double,

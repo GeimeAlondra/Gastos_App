@@ -38,6 +38,7 @@ class GastoViewModel : ViewModel() {
         dbRef?.addValueEventListener(gastosListener!!)
     }
 
+
     fun agregarGasto(gasto: Gasto, onResultado: (Boolean, String?) -> Unit) {
         try {
             val uid = auth.currentUser?.uid ?: return onResultado(false, "No autenticado")
@@ -47,33 +48,38 @@ class GastoViewModel : ViewModel() {
             val listaTemp = _gastos.value.orEmpty().toMutableList().apply { add(gastoConId) }
             _gastos.value = listaTemp
 
-            println("REGISTRANDO GASTO: $gastoConId")
+            println("=== REGISTRANDO GASTO ===")
+            println("Categoría ID: ${gasto.categoriaId}")
+            println("Monto: ${gasto.monto}")
+            println("Usuario UID: $uid")
 
             FirebaseDatabase.getInstance()
                 .reference.child("gastos").child(uid).child(nuevoId)
                 .setValue(gastoConId)
                 .addOnSuccessListener {
+                    println("  Gasto guardado en Firebase, ahora actualizando presupuesto...")
                     descontarPresupuesto(uid, gasto.categoriaId, gasto.monto) { exito, msg ->
+                        println("  Resultado actualización presupuesto: $exito - $msg")
                         if (exito) {
                             onResultado(true, "Gasto guardado")
                         } else {
+                            println("  Error en presupuesto, revirtiendo gasto...")
                             revertirGasto(uid, nuevoId, listaTemp, gastoConId)
                             onResultado(false, msg)
                         }
                     }
                 }
                 .addOnFailureListener { e ->
-                    println("ERROR Firebase (setValue): ${e.message}")
+                    println("  ERROR Firebase (setValue): ${e.message}")
                     revertirGasto(uid, nuevoId, listaTemp, gastoConId)
-                    onResultado(false, "Error de red")
+                    onResultado(false, "Error de red: ${e.message}")
                 }
         } catch (e: Exception) {
-            println("CRASH en registrarNuevoGasto: ${e.message}")
+            println("  CRASH en registrarNuevoGasto: ${e.message}")
             e.printStackTrace()
-            onResultado(false, "Error interno")
+            onResultado(false, "Error interno: ${e.message}")
         }
     }
-
     fun editarGasto(gastoNuevo: Gasto, posicion: Int, onResultado: (Boolean, String?) -> Unit) {
         try {
             val uid = auth.currentUser?.uid ?: return onResultado(false, "No autenticado")
@@ -163,55 +169,83 @@ class GastoViewModel : ViewModel() {
     }
 
     // === AJUSTAR PRESUPUESTO ===
+    // En GastoViewModel.kt - VERIFICA que estos métodos estén así
     private fun descontarPresupuesto(uid: String, categoriaId: Int, monto: Double, callback: (Boolean, String?) -> Unit) {
-        ajustarPresupuesto(uid, categoriaId, -monto, callback)
-    }
-
-    private fun sumarPresupuesto(uid: String, categoriaId: Int, monto: Double, callback: (Boolean, String?) -> Unit) {
+        println("  DESCONTANDO del presupuesto: $monto")
         ajustarPresupuesto(uid, categoriaId, monto, callback)
     }
 
+    private fun sumarPresupuesto(uid: String, categoriaId: Int, monto: Double, callback: (Boolean, String?) -> Unit) {
+        println("  SUMANDO al presupuesto: $monto")
+        ajustarPresupuesto(uid, categoriaId, -monto, callback)
+    }
+
+    // En GastoViewModel.kt
+
     private fun ajustarPresupuesto(uid: String, categoriaId: Int, ajuste: Double, callback: (Boolean, String?) -> Unit) {
         try {
+            println("🔧 AJUSTANDO PRESUPUESTO - Categoría: $categoriaId, Ajuste: $ajuste")
+
             val ref = FirebaseDatabase.getInstance().reference.child("presupuestos").child(uid)
-            ref.orderByChild("categoriaId").equalTo(categoriaId.toDouble())
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        if (!snapshot.exists()) {
-                            callback(false, "No hay presupuesto para esta categoría")
-                            return
+            ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    println("  Presupuestos encontrados: ${snapshot.childrenCount}")
+
+                    var presupuestoEncontrado: DataSnapshot? = null
+                    for (child in snapshot.children) {
+                        val presupuesto = child.getValue(Presupuesto::class.java)
+                        println("  Revisando presupuesto: ${presupuesto?.categoriaId} vs $categoriaId")
+                        if (presupuesto?.categoriaId == categoriaId) {
+                            presupuestoEncontrado = child
+                            println("  Presupuesto encontrado: ${child.key}")
+                            break
                         }
-
-                        var aplicado = false
-                        var mensaje = "Operación exitosa"
-
-                        for (child in snapshot.children) {
-                            val p = child.getValue(Presupuesto::class.java) ?: continue
-                            val nuevoSaldo = p.cantidad + ajuste
-
-                            if (nuevoSaldo >= 0 || ajuste > 0) {
-                                child.ref.child("cantidad").setValue(nuevoSaldo)
-                                aplicado = true
-                                mensaje = "Saldo: $${String.format("%.2f", nuevoSaldo)}"
-                                break
-                            } else {
-                                mensaje = "Saldo insuficiente"
-                            }
-                        }
-                        callback(aplicado, mensaje)
                     }
 
-                    override fun onCancelled(error: DatabaseError) {
-                        callback(false, "Error Firebase: ${error.message}")
+                    if (presupuestoEncontrado == null) {
+                        println("  No hay presupuesto para la categoría $categoriaId")
+                        callback(false, "No hay presupuesto para esta categoría")
+                        return
                     }
-                })
+
+                    val presupuesto = presupuestoEncontrado.getValue(Presupuesto::class.java)
+
+                    // CORRECCIÓN: Para DESCONTAR gastos, el ajuste debe ser POSITIVO (sumar al montoGastado)
+                    val nuevoMontoGastado = (presupuesto?.montoGastado ?: 0.0) + ajuste
+
+                    println("  Monto actual: ${presupuesto?.montoGastado}, Nuevo: $nuevoMontoGastado")
+                    println("  Presupuesto total: ${presupuesto?.cantidad}")
+                    println("  Saldo disponible después: ${(presupuesto?.cantidad ?: 0.0) - nuevoMontoGastado}")
+
+                    // Validar que no exceda el presupuesto
+                    if (nuevoMontoGastado > (presupuesto?.cantidad ?: 0.0)) {
+                        println("  Saldo insuficiente")
+                        callback(false, "Saldo insuficiente en el presupuesto")
+                        return
+                    }
+
+                    presupuestoEncontrado.ref.child("montoGastado").setValue(nuevoMontoGastado)
+                        .addOnSuccessListener {
+                            println("  Presupuesto actualizado exitosamente")
+                            val saldoRestante = (presupuesto?.cantidad ?: 0.0) - nuevoMontoGastado
+                            callback(true, "Presupuesto actualizado. Saldo restante: $${String.format("%.2f", saldoRestante)}")
+                        }
+                        .addOnFailureListener { e ->
+                            println("  Error al actualizar presupuesto: ${e.message}")
+                            callback(false, "Error al actualizar el presupuesto")
+                        }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    println("  Error Firebase: ${error.message}")
+                    callback(false, "Error Firebase: ${error.message}")
+                }
+            })
         } catch (e: Exception) {
-            println("CRASH en ajustarPresupuesto: ${e.message}")
-            e.printStackTrace()
+            println("  CRASH en ajustarPresupuesto: ${e.message}")
             callback(false, "Error interno")
         }
     }
-
     // === REVERTIR ===
     private fun revertirGasto(uid: String, id: String, lista: MutableList<Gasto>, gasto: Gasto) {
         FirebaseDatabase.getInstance().reference.child("gastos").child(uid).child(id).removeValue()
