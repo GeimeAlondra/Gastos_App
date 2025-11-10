@@ -59,7 +59,7 @@
                     app:layout_constraintVertical_bias="1.0"
                     app:lottie_autoPlay="false"
                     app:lottie_loop="false"
-                    app:lottie_rawRes="@raw/agregar_presupuesto" />
+                    app:lottie_rawRes="@raw/agregar_presupuest" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.circularreveal.cardview.CircularRevealCardView>

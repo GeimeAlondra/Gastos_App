@@ -16,8 +16,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // --- LÍNEA AÑADIDA ---
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
 rootProject.name = "GastosApp"
 include(":app")
+
