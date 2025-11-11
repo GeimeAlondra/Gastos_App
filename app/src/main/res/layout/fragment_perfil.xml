@@ -30,32 +30,33 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingTop="32dp">
+            android:paddingTop="32dp"
+            android:padding="10dp">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgPerfil"
                 android:layout_width="130dp"
                 android:layout_height="130dp"
+                android:contentDescription="@string/profile_picture"
                 android:src="@drawable/icon_perfil"
-                android:scaleType="centerCrop"
+                android:padding="5dp"
                 app:shapeAppearanceOverlay="@style/CircleWithBorder"
                 app:strokeColor="@color/dorado"
-                app:strokeWidth="5dp"
-                android:elevation="12dp"
-                android:translationZ="12dp"
-                android:contentDescription="@string/profile_picture" />
+                app:strokeWidth="4dp"
+                />
 
             <TextView
                 android:id="@+id/p_nombre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/tv_perfilUsuario"
-                android:textColor="@android:color/white"
-                android:textSize="28sp"
+                android:textColor="@color/blanco"
+                android:textSize="24sp"
                 android:textStyle="bold"
+                android:textAllCaps="true"
+                android:textAlignment="center"
                 android:fontFamily="sans-serif-black"
-                android:letterSpacing="0.08"
-                android:shadowColor="#80000000"
+                android:shadowColor="@color/negro"
                 android:shadowDx="0"
                 android:shadowDy="3"
                 android:shadowRadius="6"
