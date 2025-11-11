@@ -27,5 +27,8 @@
     <color name="amarillo">#FFEB3B</color>
     <color name="morado">#9C27B0</color>
 
+    <color name="verde_formal">#10B981</color>
+    <color name="dorado">#FFD700</color>
+
     #2E5A8A
 </resources>
