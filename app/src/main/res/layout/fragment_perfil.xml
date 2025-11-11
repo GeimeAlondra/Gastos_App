@@ -62,15 +62,15 @@
                 android:shadowRadius="6"
                 android:layout_marginTop="20dp" />
 
-            <TextView
-                android:id="@+id/p_rol"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/txt_nivel_usuario"
-                android:textColor="#CCFFFFFF"
-                android:textSize="15sp"
-                android:fontFamily="sans-serif-medium"
-                android:layout_marginTop="6dp" />
+<!--            <TextView-->
+<!--                android:id="@+id/p_rol"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/txt_nivel_usuario"-->
+<!--                android:textColor="#CCFFFFFF"-->
+<!--                android:textSize="15sp"-->
+<!--                android:fontFamily="sans-serif-medium"-->
+<!--                android:layout_marginTop="6dp" />-->
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
