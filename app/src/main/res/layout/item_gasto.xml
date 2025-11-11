@@ -23,17 +23,17 @@
             android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/tvNombrePresupuesto"
+                android:id="@+id/tvNombreGasto"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Nombre Presupuesto"
+                android:text="Nombre Gasto"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#000000" />
 
             <TextView
-                android:id="@+id/tvCantidad"
+                android:id="@+id/tvCantidadGasto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="$0.00"
@@ -47,61 +47,7 @@
 
         </LinearLayout>
 
-        <!-- NUEVO: Saldo disponible -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="4dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Saldo disponible:"
-                android:textSize="12sp"
-                android:textColor="#666666" />
-
-            <TextView
-                android:id="@+id/tvSaldoDisponible"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$0.00"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#4CAF50"
-                android:background="#E8F5E8"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="2dp"
-                android:gravity="center" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Categoria:"
-                android:textSize="12sp"
-                android:textColor="#666666" />
-
-            <TextView
-                android:id="@+id/tvCategoria"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Medicina"
-                android:textSize="14sp"
-                android:textColor="#000000" />
-
-        </LinearLayout>
-
-        <!-- Fila 2: Fechas -->
+        <!-- Fila 2: Descripción-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -117,12 +63,44 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Inicio:"
+                    android:text="Descripción:"
                     android:textSize="12sp"
                     android:textColor="#666666" />
 
                 <TextView
-                    android:id="@+id/tvFechaInicio"
+                    android:id="@+id/tvDescripcion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Para la consulta medica"
+                    android:textSize="14sp"
+                    android:textColor="#000000" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Fila 3: Fecha y categoria-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fecha:"
+                    android:textSize="12sp"
+                    android:textColor="#666666" />
+
+                <TextView
+                    android:id="@+id/tvFechaGasto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="01/01/2024"
@@ -140,15 +118,15 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Final:"
+                    android:text="Categoria:"
                     android:textSize="12sp"
                     android:textColor="#666666" />
 
                 <TextView
-                    android:id="@+id/tvFechaFinal"
+                    android:id="@+id/tvCategoria"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="31/01/2024"
+                    android:text="Medicina"
                     android:textSize="14sp"
                     android:textColor="#000000" />
 
@@ -163,7 +141,7 @@
             android:background="#E0E0E0"
             android:layout_marginTop="12dp" />
 
-        <!-- Fila 3: Estado y acciones -->
+        <!-- Fila 4: Estado y acciones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -172,7 +150,7 @@
             android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/tvEstado"
+                android:id="@+id/tvEstadoGasto"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -182,7 +160,7 @@
                 android:drawablePadding="4dp" />
 
             <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/btnEditar"
+                android:id="@+id/btnEditarGasto"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 app:lottie_rawRes="@raw/editpresupuesto"
@@ -190,7 +168,7 @@
                 android:contentDescription="Editar presupuesto"/>
 
             <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/btnEliminar"
+                android:id="@+id/btnEliminarGasto"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"

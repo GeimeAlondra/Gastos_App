@@ -2,7 +2,6 @@
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -60,7 +59,7 @@
                     app:layout_constraintVertical_bias="1.0"
                     app:lottie_autoPlay="false"
                     app:lottie_loop="false"
-                    app:lottie_rawRes="@raw/agregar_presupuesto" />
+                    app:lottie_rawRes="@raw/agregar_presupuest" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
@@ -101,4 +100,5 @@
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.core.widget.NestedScrollView>
