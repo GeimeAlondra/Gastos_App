@@ -32,7 +32,7 @@
                     android:layout_height="wrap_content"
                     android:text="¡Buenos días!"
                     android:textSize="18sp"
-                    android:textColor="@color/negro" />
+                    android:textColor="#666666" />
 
                 <TextView
                     android:id="@+id/tvNombreUsuario"
