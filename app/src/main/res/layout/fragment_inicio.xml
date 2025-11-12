@@ -137,7 +137,7 @@
                         android:text="$0.00"
                         android:textSize="14sp"
                         android:textStyle="bold"
-                        android:textColor="#2196F3" />
+                        android:textColor="@color/celeste" />
 
                 </LinearLayout>
 
