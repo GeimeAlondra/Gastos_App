@@ -13,7 +13,7 @@
     <!-- MainActivity -->
     <string name="titulo">CashControl</string>
     <string name="descripcion">CashControl te ayuda a registrar y gestionar tus gastos diarios de forma sencilla y rápida. Visualiza tus ingresos, categoriza tus gastos y descubre patrones para ahorrar más.</string>
-    <string name="btn_empezar">Empezar</string>
+    <string name="btn_empezar">Iniciar Sesion</string>
     <string name="btn_registrarse">Registrarse</string>
 
     <!-- LoginActivity -->
@@ -46,6 +46,9 @@
     <string name="tv_userName">User</string>
     <string name="tv_userEmail">user@gmail.com</string>
     <string name="tv_cerrarSesion">Cerrar Sesion</string>
+    <string name="profile_picture">imagen de perfil</string>
+    <string name="txt_nivel_usuario">nivel de usuario</string>
+    <string name="txt_usuario_correo">usuario@correo</string>
 
     <!-- id fragment Presupuesto -->
 

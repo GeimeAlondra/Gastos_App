@@ -1,96 +1,178 @@
+// com.example.gastosapp.viewModels.PresupuestoViewModel
 package com.example.gastosapp.viewModels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.gastosapp.Models.Presupuesto
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import kotlin.collections.toMutableList
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class PresupuestoViewModel : ViewModel() {
 
     private val _listaPresupuestos = MutableLiveData<List<Presupuesto>>(emptyList())
     val presupuestos: LiveData<List<Presupuesto>> get() = _listaPresupuestos
 
-    private val database = FirebaseDatabase.getInstance().reference.child("presupuestos")
+    private val auth = FirebaseAuth.getInstance()
+    private var databaseRef: DatabaseReference? = null
 
     init {
-        println("ViewModel creado")
-        cargarPresupuestosDesdeFirebase()
+        mostrarPresupuestoUsuario()
     }
 
-    private fun cargarPresupuestosDesdeFirebase() {
-        database.addValueEventListener(object : ValueEventListener {
+
+    private fun mostrarPresupuestoUsuario() {
+        val currentUser = auth.currentUser ?: return
+        val uid = currentUser.uid
+
+        databaseRef = FirebaseDatabase.getInstance().reference.child("presupuestos").child(uid)
+
+        databaseRef?.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val presupuestosList = mutableListOf<Presupuesto>()
-                for (childSnapshot in snapshot.children) {
-                    val presupuesto = childSnapshot.getValue(Presupuesto::class.java)
-                    presupuesto?.id = childSnapshot.key // Asegura que el ID se asigne
-                    presupuesto?.let { presupuestosList.add(it) }
+                val lista = mutableListOf<Presupuesto>()
+                for (child in snapshot.children) {
+                    val presupuesto = child.getValue(Presupuesto::class.java)
+                    presupuesto?.id = child.key
+                    presupuesto?.let {
+                        // CALCULAR EL SALDO DISPONIBLE CON EL MONTO GASTADO
+                        val saldoDisponible = it.cantidad - it.montoGastado
+                        lista.add(it)
+                    }
                 }
-                // Solo actualiza si la lista ha cambiado
-                if (_listaPresupuestos.value != presupuestosList) {
-                    _listaPresupuestos.value = presupuestosList
-                    println("DEBUG: Lista de presupuestos actualizada desde Firebase: ${presupuestosList.size}")
-                }
+                _listaPresupuestos.value = lista
             }
 
             override fun onCancelled(error: DatabaseError) {
-                println("Error al cargar presupuestos desde Firebase: ${error.message}")
+                println("Error Firebase: ${error.message}")
             }
         })
     }
-
     fun agregarPresupuesto(presupuesto: Presupuesto) {
-        val currentList = _listaPresupuestos.value?.toMutableList() ?: mutableListOf()
-        val presupuestoId = database.push().key ?: return
-        //presupuesto.id = presupuestoId
-        currentList.add(presupuesto)
-        _listaPresupuestos.value = currentList
+        val uid = auth.currentUser?.uid ?: return
+        val nuevoId = databaseRef?.push()?.key ?: return
 
-        database.child(presupuestoId).setValue(presupuesto)
-            .addOnSuccessListener {
-                println("ViewModel: Presupuesto agregado - ${presupuesto.nombre}")
-            }
+        val presupuestoConId = presupuesto.apply { id = nuevoId }
+        val nuevaLista = (_listaPresupuestos.value?.toMutableList() ?: mutableListOf()).apply {
+            add(presupuestoConId)
+        }
+        _listaPresupuestos.value = nuevaLista
+
+        FirebaseDatabase.getInstance()
+            .reference.child("presupuestos").child(uid).child(nuevoId)
+            .setValue(presupuestoConId)
             .addOnFailureListener {
-                println("Error al guardar en Firebase: ${it.message}")
-                // Opcional: Revertir la lista si falla
-                currentList.remove(presupuesto)
-                _listaPresupuestos.value = currentList
+                nuevaLista.remove(presupuestoConId)
+                _listaPresupuestos.value = nuevaLista
+            }
+    }
+
+    fun editarPresupuesto(presupuestoActualizado: Presupuesto, position: Int) {
+        val uid = auth.currentUser?.uid ?: return
+        val id = presupuestoActualizado.id ?: return
+
+        val lista = _listaPresupuestos.value?.toMutableList() ?: return
+        if (position !in lista.indices) return
+
+        val original = lista[position].copy()
+        lista[position] = presupuestoActualizado
+        _listaPresupuestos.value = lista
+
+        FirebaseDatabase.getInstance().reference.child("presupuestos").child(uid).child(id)
+            .setValue(presupuestoActualizado)
+            .addOnFailureListener {
+                lista[position] = original
+                _listaPresupuestos.value = lista
             }
     }
 
     fun eliminarPresupuesto(position: Int) {
-        val currentList = _listaPresupuestos.value?.toMutableList() ?: return
-        if (position in currentList.indices) {
-            val presupuesto = currentList.removeAt(position)
-            _listaPresupuestos.value = currentList
+        val lista = _listaPresupuestos.value?.toMutableList() ?: return
+        if (position !in lista.indices) return
 
-            presupuesto.id?.let { id ->
-                database.child(id).removeValue()
-                    .addOnSuccessListener {
-                        println("ViewModel: Presupuesto eliminado - ${presupuesto.nombre}")
-                        println("   Total presupuestos ahora: ${currentList.size}")
-                    }
-                    .addOnFailureListener {
-                        println("Error al eliminar de Firebase: ${it.message}")
-                        // Opcional: Revertir la eliminación si falla
-                        currentList.add(position, presupuesto)
-                        _listaPresupuestos.value = currentList
-                    }
-            } ?: println("ViewModel: No se pudo eliminar - ID no encontrado")
-        } else {
-            println("ViewModel: No se pudo eliminar - posición inválida: $position")
+        val presupuesto = lista.removeAt(position)
+        _listaPresupuestos.value = lista
+
+        val uid = auth.currentUser?.uid ?: return
+        presupuesto.id?.let { id ->
+            FirebaseDatabase.getInstance()
+                .reference.child("presupuestos").child(uid).child(id)
+                .removeValue()
+                .addOnFailureListener {
+                    lista.add(position, presupuesto)
+                    _listaPresupuestos.value = lista
+                }
         }
     }
 
-    fun getCantidadPresupuestos(): Int = _listaPresupuestos.value?.size ?: 0
+    fun getPositionById(id: String): Int {
+        return _listaPresupuestos.value?.indexOfFirst { it.id == id } ?: -1
+    }
 
     override fun onCleared() {
+        //databaseRef?.removeEventListener { }
         super.onCleared()
-        println("ViewModel destruido")
     }
+
+    fun getPresupuestoPorCategoria(categoriaId: Int): Presupuesto? {
+        return _listaPresupuestos.value?.find { it.categoriaId == categoriaId }
+    }
+
+    private fun haExpirado(fechaFinal: String?): Boolean {
+        if (fechaFinal.isNullOrEmpty()) return false
+
+        return try {
+            val formatoFecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val fechaLimite = formatoFecha.parse(fechaFinal)
+            val hoy = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
+
+            fechaLimite?.before(hoy) ?: false
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    /**
+     * Obtiene el estado del presupuesto (Activo/Expirado)
+     */
+    fun obtenerEstadoPresupuesto(presupuesto: Presupuesto): String {
+        return if (haExpirado(presupuesto.fechaFinal)) {
+            "Expirado"
+        } else {
+            "  Activo"
+        }
+    }
+
+    /**
+     * Elimina automáticamente los presupuestos expirados
+     */
+    fun limpiarPresupuestosExpirados() {
+        val uid = auth.currentUser?.uid ?: return
+        val listaActual = _listaPresupuestos.value ?: emptyList()
+
+        val presupuestosExpirados = listaActual.filter { haExpirado(it.fechaFinal) }
+        val idsExpirados = presupuestosExpirados.mapNotNull { it.id }
+
+        if (idsExpirados.isNotEmpty()) {
+            // Eliminar de Firebase
+            idsExpirados.forEach { id ->
+                FirebaseDatabase.getInstance()
+                    .reference.child("presupuestos").child(uid).child(id)
+                    .removeValue()
+            }
+
+            // Actualizar lista local
+            val nuevaLista = listaActual.filterNot { haExpirado(it.fechaFinal) }
+            _listaPresupuestos.value = nuevaLista
+        }
+    }
+
 }

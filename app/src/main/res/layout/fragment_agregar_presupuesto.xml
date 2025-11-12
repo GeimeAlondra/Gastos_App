@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#80000000"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:background="@android:color/transparent"
+    android:overScrollMode="never"
+    android:fadingEdgeLength="0dp"
+    android:requiresFadingEdge="none">
 
-    <androidx.cardview.widget.CardView
+<androidx.cardview.widget.CardView
         android:id="@+id/cardView"
-        android:layout_width="320dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="16dp"
-        app:cardElevation="8dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardElevation="2dp"
+        app:cardUseCompatPadding="true"
+        app:cardPreventCornerOverlap="false"
         android:layout_gravity="center">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#FFFFFF"
-            android:padding="24dp">
+            android:padding="24dp"
+            android:background="@android:color/transparent">
 
             <TextView
                 android:layout_width="match_parent"
@@ -34,20 +39,23 @@
                 android:textColor="@color/negro"
                 android:layout_marginBottom="20dp" />
 
-            <!-- Nombre del gasto -->
+            <!-- Categoría -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="24dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etNombreGasto"
+                <AutoCompleteTextView
+                    android:id="@+id/etCategoria"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nombre del gasto"
+                    android:hint="Categoría"
+                    android:inputType="none"
                     android:textColor="@color/negro"/>
 
             </com.google.android.material.textfield.TextInputLayout>
+
 
             <!-- Cantidad -->
             <com.google.android.material.textfield.TextInputLayout
@@ -64,6 +72,7 @@
                     android:inputType="numberDecimal" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
 
             <!-- Fecha de Inicio -->
             <LinearLayout
@@ -87,10 +96,10 @@
                     android:layout_weight="1.5"
                     android:text="Seleccionar"
                     android:textSize="12sp"
-                    android:backgroundTint="@color/celeste" />
+                    android:backgroundTint="#000000" />
 
                 <TextView
-                    android:id="@+id/tvFechaInicio"
+                    android:id="@+id/etFechaInicio"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -122,10 +131,10 @@
                     android:layout_weight="1.5"
                     android:text="Seleccionar"
                     android:textSize="12sp"
-                    android:backgroundTint="@color/celeste" />
+                    android:backgroundTint="#000000" />
 
                 <TextView
-                    android:id="@+id/tvFechaFinal"
+                    android:id="@+id/etFechaFinal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -143,7 +152,7 @@
                 android:text="GUARDAR PRESUPUESTO"
                 android:textSize="16sp"
                 android:layout_marginBottom="10dp"
-                android:backgroundTint="#4CAF50" />
+                android:backgroundTint="#097117" />
 
             <Button
                 android:id="@+id/btnCancelar"
@@ -151,10 +160,10 @@
                 android:layout_height="50dp"
                 android:text="CANCELAR"
                 android:textSize="16sp"
-                android:backgroundTint="#F44336" />
+                android:backgroundTint="#920909" />
 
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
-</LinearLayout>
+</ScrollView>

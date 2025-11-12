@@ -6,179 +6,200 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
+import com.example.gastosapp.Models.Categorias
 import com.example.gastosapp.Models.Presupuesto
 import com.example.gastosapp.R
 import com.example.gastosapp.viewModels.PresupuestoViewModel
-import com.google.firebase.database.FirebaseDatabase
-import kotlin.collections.getOrNull
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class FragmentPresupuesto : Fragment() {
 
-    private val ARG_PARAM1 = "param1"
-    private val ARG_PARAM2 = "param2"
-    private var mParam1: String? = null
-    private var mParam2: String? = null
-
     private lateinit var viewModel: PresupuestoViewModel
-    private lateinit var containerPresupuestos: LinearLayout
-    private val database = FirebaseDatabase.getInstance().reference.child("presupuestos")
+    private lateinit var container: LinearLayout
+    private lateinit var btnAdd: LottieAnimationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            mParam1 = it.getString(ARG_PARAM1)
-            mParam2 = it.getString(ARG_PARAM2)
-        }
-
         viewModel = ViewModelProvider(this)[PresupuestoViewModel::class.java]
-        println("ViewModel inicializado")
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_presupuesto, container, false)
+        this.container = view.findViewById(R.id.containerPresupuestos)
+        btnAdd = view.findViewById(R.id.agregarPresupuesto)
 
-        // Inicializar vistas
-        containerPresupuestos = view.findViewById(R.id.containerPresupuestos)
-        val btnAddCategory: LottieAnimationView = view.findViewById(R.id.agregarPresupuesto)
+        viewModel.presupuestos.observe(viewLifecycleOwner) { actualizarUI(it) }
 
-        println("Vistas inicializadas")
-
-        // Configurar Observer para los presupuestos
-        viewModel.presupuestos.observe(viewLifecycleOwner) { presupuesto ->
-            println("Observer ejecutado - ${presupuesto.size} presupuestos")
-            actualizarVistaPresupuestos(presupuesto)
-        }
-
-        // Configurar click listener del botón
-        btnAddCategory.setOnClickListener {
-            println("Botón presionado")
-            btnAddCategory.playAnimation()
-
-            Handler(Looper.getMainLooper()).postDelayed({
-                showFloatingWindow()
-            }, 500)
+        btnAdd.setOnClickListener {
+            btnAdd.playAnimation()
+            Handler(Looper.getMainLooper()).postDelayed({ abrirAgregar() }, 500)
         }
         return view
     }
 
-    private fun actualizarVistaPresupuestos(presupuesto: List<Presupuesto>) {
-        println("Actualizando vista con ${presupuesto.size} presupuestos")
 
-        // Limpiar el contenedor
-        containerPresupuestos.removeAllViews()
-
-        if (presupuesto.isEmpty()) {
-            // Mostrar estado vacío
-            val tvEmpty = TextView(requireContext()).apply {
-                text = "No hay presupuestos. ¡Agrega uno nuevo!"
-                textSize = 16f
-                gravity = View.TEXT_ALIGNMENT_CENTER
-                setPadding(0, 50, 0, 50)
-                setTextColor(resources.getColor(android.R.color.darker_gray, null))
+    private fun abrirAgregar() {
+        val dialog = FragmentAgregarPresupuesto().apply {
+            // 1. Obtener y pasar las categorías ocupadas
+            arguments = Bundle().apply {
+                putStringArrayList("categorias_ocupadas", ArrayList(obtenerCategoriasOcupadas()))
             }
-            containerPresupuestos.addView(tvEmpty)
-            println("Mostrando estado vacío")
-        } else {
-            // Agregar cada presupuesto a la vista
-            presupuesto.forEachIndexed { index, presupuesto ->
-                val itemView = crearItemPresupuesto(presupuesto, index)
-                containerPresupuestos.addView(itemView)
-            }
-            println("${presupuesto.size} presupuestos mostrados")
-        }
-    }
 
-    private fun showFloatingWindow() {
-        println("Mostrando diálogo de agregar presupuesto")
-
-        try {
-            val dialogFragment = FragmentAgregarPresupuesto()
-
-            // Configurar el listener para cuando se guarde un presupuesto
-            dialogFragment.setPresupuestoGuardadoListener(object : FragmentAgregarPresupuesto.PresupuestoGuardadoListener {
-                override fun onPresupuestoGuardado(presupuesto: Presupuesto) {
-                    println("Presupuesto guardado recibido: ${presupuesto.nombre}")
-
-                    // Guardar en Firebase
-                    val presupuestoId = database.push().key ?: return
-                    presupuesto.id = presupuestoId
-                    database.child(presupuestoId).setValue(presupuesto)
-                        .addOnSuccessListener {
-                            Toast.makeText(requireContext(), "¡Presupuesto agregado!", Toast.LENGTH_SHORT).show()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(requireContext(), "Error al guardar en Firebase", Toast.LENGTH_SHORT).show()
-                        }
+            // 2. Configurar el listener para guardar el nuevo presupuesto
+            setPresupuestoGuardadoListener(object : FragmentAgregarPresupuesto.PresupuestoGuardadoListener {
+                override fun onPresupuestoGuardado(p: Presupuesto) {
+                    viewModel.agregarPresupuesto(p)
                 }
             })
-
-            // Mostrar el diálogo
-            dialogFragment.show(parentFragmentManager, "presupuesto_dialog")
-
-        } catch (e: Exception) {
-            println("Error al mostrar diálogo: ${e.message}")
-            Toast.makeText(requireContext(), "Error al abrir formulario", Toast.LENGTH_SHORT).show()
         }
+        dialog.show(parentFragmentManager, "agregar")
     }
 
-    private fun crearItemPresupuesto(presupuesto: Presupuesto, position: Int): View {
-        println("Creando item para: ${presupuesto.nombre}")
 
-        val inflater = LayoutInflater.from(requireContext())
-        val itemView = inflater.inflate(R.layout.item_presupuesto, containerPresupuestos, false)
-
-        try {
-            // Configurar las vistas del item
-            itemView.findViewById<TextView>(R.id.tvNombrePresupuesto).text = presupuesto.nombre
-            itemView.findViewById<TextView>(R.id.tvCantidad).text = String.format("$%.2f", presupuesto.cantidad)
-            itemView.findViewById<TextView>(R.id.tvFechaInicio).text = presupuesto.fechaInicio
-            itemView.findViewById<TextView>(R.id.tvFechaFinal).text = presupuesto.fechaFinal
-            itemView.findViewById<TextView>(R.id.tvEstado).text = "Activo"
-            
-            // Configurar botón de eliminar
-            itemView.findViewById<View>(R.id.btnEliminar)?.setOnClickListener {
-                eliminarPresupuesto(position)
+    private fun abrirEdicion(p: Presupuesto) {
+        val dialog = FragmentAgregarPresupuesto().apply {
+            // 1. Obtener y pasar las categorías ocupadas (excluyendo la actual)
+            arguments = Bundle().apply {
+                putStringArrayList("categorias_ocupadas", ArrayList(obtenerCategoriasOcupadas(p.id)))
             }
 
-        } catch (e: Exception) {
-            println("Error al configurar item: ${e.message}")
+            // 2. Configurar el presupuesto a editar y el listener de edición
+            setPresupuestoAEditar(p, object : FragmentAgregarPresupuesto.PresupuestoEditadoListener {
+                override fun onPresupuestoEditado(editado: Presupuesto) {
+                    val pos = viewModel.getPositionById(editado.id!!)
+                    if (pos != -1) viewModel.editarPresupuesto(editado, pos)
+                }
+            })
         }
-
-        return itemView
+        dialog.show(parentFragmentManager, "editar")
     }
 
-    private fun eliminarPresupuesto(position: Int) {
-        println("Eliminando presupuesto en posición: $position")
 
-        viewModel.eliminarPresupuesto(position)
-        Toast.makeText(requireContext(), "Presupuesto eliminado", Toast.LENGTH_SHORT).show()
-
-        // Opcional: Eliminar de Firebase si ya está guardado
-        viewModel.presupuestos.value?.getOrNull(position)?.id?.let { id ->
-            database.child(id).removeValue()
-                .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Error al eliminar de Firebase", Toast.LENGTH_SHORT).show()
-                }
+    private fun obtenerCategoriasOcupadas(excluirIdPresupuesto: String? = null): List<String> {
+        val categoriasOcupadas = mutableListOf<String>()
+        val formatoFecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val hoyCalendar = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }
+        val fechaHoy = hoyCalendar.time
+
+        // Usamos la lista de presupuestos actual del ViewModel
+        val listaActual = viewModel.presupuestos.value ?: emptyList()
+
+        for (presupuesto in listaActual) {
+            // Si estamos editando, saltamos el presupuesto actual en la comprobación
+            if (presupuesto.id == excluirIdPresupuesto) {
+                continue
+            }
+
+            val fechaFinalStr = presupuesto.fechaFinal
+            if (fechaFinalStr != null) {
+                try {
+                    val fechaFinal = formatoFecha.parse(fechaFinalStr)
+                    // Si la fecha final del presupuesto es hoy o en el futuro, está activo
+                    if (fechaFinal != null && !fechaFinal.before(fechaHoy)) {
+                        val nombreCategoria = Categorias.getNombrePorId(presupuesto.categoriaId)
+                        if (nombreCategoria.isNotEmpty()) {
+                            categoriasOcupadas.add(nombreCategoria)
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace() // Error de formato de fecha
+                }
+            }
+        }
+        return categoriasOcupadas
+    }
+
+    private fun actualizarUI(lista: List<Presupuesto>) {
+        container.removeAllViews()
+        if (lista.isEmpty()) {
+            container.addView(TextView(context).apply {
+                text = "No hay presupuestos. ¡Agrega uno!"
+                textSize = 16f
+                gravity = android.view.Gravity.CENTER
+                setPadding(0, 100, 0, 100)
+            })
+            return
+        }
+        lista.forEachIndexed { i, p -> container.addView(crearItem(p, i)) }
+    }
+
+
+    private fun crearItem(p: Presupuesto, pos: Int): View {
+        val v = LayoutInflater.from(context).inflate(R.layout.item_presupuesto, container, false)
+
+        v.findViewById<TextView>(R.id.tvNombrePresupuesto).text = p.nombre
+        v.findViewById<TextView>(R.id.tvCantidad).text = String.format("$%.2f", p.cantidad)
+        v.findViewById<TextView>(R.id.tvFechaInicio).text = p.fechaInicio
+        v.findViewById<TextView>(R.id.tvFechaFinal).text = p.fechaFinal
+        v.findViewById<TextView>(R.id.tvCategoria).text = Categorias.getNombrePorId(p.categoriaId)
+
+        // NUEVO: Mostrar el saldo disponible
+        val saldoDisponible = p.cantidad - p.montoGastado
+        v.findViewById<TextView>(R.id.tvSaldoDisponible).text =
+            String.format("Saldo disponible: $%.2f", saldoDisponible)
+
+        // Cambiar color según el saldo
+        val tvSaldo = v.findViewById<TextView>(R.id.tvSaldoDisponible)
+        if (saldoDisponible < 0) {
+            tvSaldo.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark))
+        } else if (saldoDisponible < p.cantidad * 0.2) {
+            tvSaldo.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_orange_dark))
+        } else {
+            tvSaldo.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_green_dark))
+        }
+
+        // CONFIGURAR ESTADO DEL PRESUPUESTO
+        val tvEstado = v.findViewById<TextView>(R.id.tvEstadoPresupuesto)
+        val estado = viewModel.obtenerEstadoPresupuesto(p)
+
+        tvEstado.text = estado
+
+        // Cambiar color según estado
+        if (estado == "Expirado") {
+            tvEstado.setBackgroundResource(R.drawable.bg_estado_expirado)
+            tvEstado.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+        } else {
+            tvEstado.setBackgroundResource(R.drawable.bg_estado_activo)
+            tvEstado.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+        }
+
+        v.findViewById<View>(R.id.btnEditar)?.setOnClickListener { abrirEdicion(p) }
+        v.findViewById<View>(R.id.btnEliminar)?.setOnClickListener {
+            viewModel.eliminarPresupuesto(pos)
+            Toast.makeText(context, "Eliminado", Toast.LENGTH_SHORT).show()
+        }
+        return v
+    }
+
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Verificar expirados al cargar el fragmento
+        verificarPresupuestosExpirados()
     }
 
     override fun onResume() {
         super.onResume()
-        println("FragmentPresupuesto: onResume")
+        // Verificar expirados cada vez que se vuelve al fragmento
+        verificarPresupuestosExpirados()
     }
 
-    override fun onPause() {
-        super.onPause()
-        println("FragmentPresupuesto: onPause")
+    private fun verificarPresupuestosExpirados() {
+        viewModel.limpiarPresupuestosExpirados()
     }
+
 }
