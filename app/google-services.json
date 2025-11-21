@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "536022149594-gjr974d9li6b0kkvu7li8fgbl7gf9rut.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gastosapp",
+            "certificate_hash": "65e7515d3e42fe6f4390bc0f476f81109acdce57"
+          }
+        },
+        {
           "client_id": "536022149594-mlgl2uo8flnli6ja6l765obld3o8jm8q.apps.googleusercontent.com",
           "client_type": 3
         }

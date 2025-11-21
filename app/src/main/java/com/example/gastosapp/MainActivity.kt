@@ -97,7 +97,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun irInicioActivity() {
-        startActivity(Intent(applicationContext, DashboardActivity::class.java))
+        startActivity(Intent(this, DashboardActivity::class.java))
+        finish()
     }
 
 }
