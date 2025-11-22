@@ -66,8 +66,8 @@ class FragmentAgregarPresupuesto : DialogFragment() {
     }
 
     private fun inicializarFechasPorDefecto() {
-        binding.etFechaInicio.text = formatearFecha(calendarInicio)
-        binding.etFechaFinal.text = formatearFecha(calendarFinal)
+        binding.etFechaInicio.text = formatearFecha(calendarInicio.time)
+        binding.etFechaFinal.text = formatearFecha(calendarFinal.time)
         binding.btnFechaInicio.text = "Cambiar"
         binding.btnFechaFinal.text = "Cambiar"
     }
@@ -103,7 +103,7 @@ class FragmentAgregarPresupuesto : DialogFragment() {
             requireContext(),
             { _, año, mes, dia ->
                 calendar.set(año, mes, dia)
-                val fechaFormateada = formatearFecha(calendar)
+                val fechaFormateada = formatearFecha(calendar.time)
                 if (esInicio) {
                     binding.etFechaInicio.text = fechaFormateada
                     binding.btnFechaInicio.text = "Cambiar"
@@ -134,7 +134,8 @@ class FragmentAgregarPresupuesto : DialogFragment() {
     private fun precargarDatos(p: Presupuesto) {
         binding.etCantidad.setText(p.cantidad.toString())
         binding.etCategoria.setText(p.categoria.nombre, false)
-        // Fechas ya vienen como Date, no String
+        calendarInicio.time = p.fechaInicio
+        calendarFinal.time = p.fechaFinal
         binding.etFechaInicio.text = formatearFecha(p.fechaInicio)
         binding.etFechaFinal.text = formatearFecha(p.fechaFinal)
         binding.btnFechaInicio.text = "Cambiar"
@@ -151,10 +152,14 @@ class FragmentAgregarPresupuesto : DialogFragment() {
         val presupuesto = presupuestoAEditar?.copy(
             categoria = categoria,
             cantidad = cantidad,
+            fechaInicio = calendarInicio.time,
+            fechaFinal = calendarFinal.time,
             montoGastado = presupuestoAEditar?.montoGastado ?: 0.0
         ) ?: Presupuesto(
             categoria = categoria,
-            cantidad = cantidad
+            cantidad = cantidad,
+            fechaInicio = calendarInicio.time,
+            fechaFinal = calendarFinal.time
         )
 
         onPresupuestoSaved?.invoke(presupuesto)
@@ -178,11 +183,11 @@ class FragmentAgregarPresupuesto : DialogFragment() {
         return valido
     }
 
-    private fun formatearFecha(date: Date): String {
-        return SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
-    }
+    private val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-    private fun formatearFecha(cal: Calendar): String = formatearFecha(cal.time)
+    private fun formatearFecha(date: Date): String {
+        return sdf.format(date)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
