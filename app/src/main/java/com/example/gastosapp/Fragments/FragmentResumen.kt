@@ -64,8 +64,8 @@ class FragmentResumen : Fragment() {
     private fun actualizarResumenCategorias(gastos: List<Gasto>) {
         binding.containerCategorias.removeAllViews()
 
-        val porCategoria = gastos.groupBy { it.categoria }.mapValues { it.value.sumOf { g -> g.monto } }
-        val total = gastos.sumOf { it.monto }.coerceAtLeast(1.0) // evitar división por 0
+        val porCategoria = gastos.groupBy { it.categoriaNombre }.mapValues { it.value.sumOf { g -> g.monto } }
+        val total = gastos.sumOf { it.monto }.coerceAtLeast(1.0)
 
         if (porCategoria.isEmpty()) {
             binding.containerCategorias.addView(TextView(requireContext()).apply {
@@ -78,22 +78,23 @@ class FragmentResumen : Fragment() {
             return
         }
 
-        porCategoria.entries.sortedByDescending { it.value }.forEach { (cat, monto) ->
+        porCategoria.entries.sortedByDescending { it.value }.forEach { (nombreCat, monto) ->
             val item = layoutInflater.inflate(R.layout.item_categorias, binding.containerCategorias, false)
-            item.findViewById<TextView>(R.id.tvNombreCategoria).text = cat.nombre
+            item.findViewById<TextView>(R.id.tvNombreCategoria).text = nombreCat  // ← String directo
             item.findViewById<TextView>(R.id.tvMontoCategoria).text = String.format("$%.2f", monto)
 
             val progress = item.findViewById<View>(R.id.progressBarCategoria)
             val params = progress.layoutParams as LinearLayout.LayoutParams
             params.weight = (monto / total * 100).toFloat()
             progress.layoutParams = params
-            progress.setBackgroundColor(obtenerColor(cat))
+            progress.setBackgroundColor(obtenerColorPorNombre(nombreCat))
 
             binding.containerCategorias.addView(item)
         }
     }
 
-    private fun obtenerColor(cat: Categoria): Int {
+    private fun obtenerColorPorNombre(catNombre: String): Int {
+        val cat = Categoria.fromNombre(catNombre)
         return when (cat) {
             Categoria.ALIMENTACION -> 0xFFE57373.toInt()
             Categoria.TRANSPORTE -> 0xFF7986CB.toInt()

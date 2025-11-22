@@ -74,7 +74,7 @@ class FragmentAgregarPresupuesto : DialogFragment() {
 
     private fun configurarCategoria() {
         val todosLosNombres = Categoria.values().map { it.nombre }
-        val categoriaActual = presupuestoAEditar?.categoria?.nombre
+        val categoriaActual = presupuestoAEditar?.categoriaNombre
 
         val nombresDisponibles = todosLosNombres.filter {
             it !in categoriasOcupadas || it == categoriaActual
@@ -133,7 +133,7 @@ class FragmentAgregarPresupuesto : DialogFragment() {
 
     private fun precargarDatos(p: Presupuesto) {
         binding.etCantidad.setText(p.cantidad.toString())
-        binding.etCategoria.setText(p.categoria.nombre, false)
+        binding.etCategoria.setText(p.categoriaNombre, false)
         calendarInicio.time = p.fechaInicio
         calendarFinal.time = p.fechaFinal
         binding.etFechaInicio.text = formatearFecha(p.fechaInicio)
@@ -145,18 +145,19 @@ class FragmentAgregarPresupuesto : DialogFragment() {
     private fun guardarPresupuesto() {
         if (!validarCampos()) return
 
+        if (!validarCampos()) return
+
         val nombreCategoria = binding.etCategoria.text.toString().trim()
         val cantidad = binding.etCantidad.text.toString().toDouble()
-        val categoria = Categoria.fromNombre(nombreCategoria)
 
         val presupuesto = presupuestoAEditar?.copy(
-            categoria = categoria,
+            categoriaNombre = nombreCategoria,
             cantidad = cantidad,
             fechaInicio = calendarInicio.time,
             fechaFinal = calendarFinal.time,
             montoGastado = presupuestoAEditar?.montoGastado ?: 0.0
         ) ?: Presupuesto(
-            categoria = categoria,
+            categoriaNombre = nombreCategoria,
             cantidad = cantidad,
             fechaInicio = calendarInicio.time,
             fechaFinal = calendarFinal.time
@@ -175,7 +176,7 @@ class FragmentAgregarPresupuesto : DialogFragment() {
             valido = false
         }
         val cat = binding.etCategoria.text.toString().trim()
-        if (cat.isEmpty() || Categoria.fromNombre(cat) == Categoria.OTROS && cat != "Otros") {
+        if (cat.isEmpty() || cat !in Categoria.values().map { it.nombre }) {
             binding.etCategoria.error = "Categoría inválida"
             valido = false
         }

@@ -51,7 +51,7 @@ class FragmentGasto : Fragment() {
     private fun abrirDialogoAgregar() {
         val categoriasValidas = presupuestoVM.presupuestos.value
             ?.filter { it.cantidad > it.montoGastado }
-            ?.map { it.categoria.nombre }
+            ?.map { it.categoriaNombre }
             ?.distinct()
             ?: emptyList()
 
@@ -69,7 +69,7 @@ class FragmentGasto : Fragment() {
     private fun abrirDialogoEditar(gasto: Gasto) {
         val categoriasValidas = presupuestoVM.presupuestos.value
             ?.filter { it.cantidad > it.montoGastado }
-            ?.map { it.categoria.nombre }
+            ?.map { it.categoriaNombre }
             ?.distinct()
             ?: emptyList()
 
@@ -122,7 +122,7 @@ class FragmentGasto : Fragment() {
         item.findViewById<TextView>(R.id.tvNombreGasto).text = gasto.nombre
         item.findViewById<TextView>(R.id.tvCantidadGasto).text = "-$${String.format("%.2f", gasto.monto)}"
         item.findViewById<TextView>(R.id.tvDescripcion).text = gasto.descripcion
-        item.findViewById<TextView>(R.id.tvCategoria).text = gasto.categoria.nombre
+        item.findViewById<TextView>(R.id.tvCategoria).text = gasto.categoriaNombre
         item.findViewById<TextView>(R.id.tvFechaGasto).text = sdf.format(gasto.fecha)
 
         item.findViewById<View>(R.id.btnEditarGasto).setOnClickListener {

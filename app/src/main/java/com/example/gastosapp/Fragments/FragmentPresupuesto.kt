@@ -66,7 +66,7 @@ class FragmentPresupuesto : Fragment() {
 
         return vm.presupuestos.value?.filter { p ->
             p.id != excluirId && p.fechaFinal.after(hoy.time) || sameDay(p.fechaFinal, hoy.time)
-        }?.map { it.categoria.nombre } ?: emptyList()
+        }?.map { it.categoriaNombre } ?: emptyList()
     }
 
     private fun actualizarUI(lista: List<Presupuesto>) {
@@ -91,11 +91,11 @@ class FragmentPresupuesto : Fragment() {
     private fun crearItem(p: Presupuesto): View {
         val v = layoutInflater.inflate(R.layout.item_presupuesto, binding.containerPresupuestos, false)
 
-        v.findViewById<TextView>(R.id.tvNombrePresupuesto).text = p.categoria.nombre
+        v.findViewById<TextView>(R.id.tvNombrePresupuesto).text = p.categoriaNombre
         v.findViewById<TextView>(R.id.tvCantidad).text = String.format("$%.2f", p.cantidad)
         v.findViewById<TextView>(R.id.tvFechaInicio).text = formatearFecha(p.fechaInicio)
         v.findViewById<TextView>(R.id.tvFechaFinal).text = formatearFecha(p.fechaFinal)
-        v.findViewById<TextView>(R.id.tvCategoria).text = p.categoria.nombre
+        v.findViewById<TextView>(R.id.tvCategoria).text = p.categoriaNombre
 
         val saldo = p.cantidad - p.montoGastado
         val tvSaldo = v.findViewById<TextView>(R.id.tvSaldoDisponible)

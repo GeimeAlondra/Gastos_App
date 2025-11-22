@@ -8,8 +8,7 @@ data class Gasto(
     val nombre: String = "",
     val descripcion: String = "",
     val monto: Double = 0.0,
-    val categoria: Categoria = Categoria.OTROS,
+    val categoriaNombre: String = "Otros",
     val fecha: Date = Date(),
-    @ServerTimestamp
-    val timestamp: Date? = null
+    @ServerTimestamp val timestamp: Date? = null
 )

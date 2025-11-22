@@ -1,5 +1,6 @@
 package com.example.gastosapp.viewModels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -42,9 +43,10 @@ class GastoViewModel : ViewModel() {
                 val ref = db.collection("gastos").document(uid).collection("mis_gastos").document()
                 val gastoConId = gasto.copy(id = ref.id)
                 ref.set(gastoConId).await()
-                actualizarPresupuesto(gasto.categoria, gasto.monto, true)
+                actualizarPresupuesto(gasto.categoriaNombre, gasto.monto, true)
             } catch (e: Exception) {
-                // Manejar error
+                Log.e("GastoVM", "Error al agregar gasto: ", e)
+
             }
         }
     }
@@ -56,11 +58,12 @@ class GastoViewModel : ViewModel() {
                 ref.set(gastoEditado).await()
 
                 // Revertir gasto original
-                actualizarPresupuesto(gastoOriginal.categoria, gastoOriginal.monto, false)
+                actualizarPresupuesto(gastoOriginal.categoriaNombre, gastoOriginal.monto, false)
                 // Aplicar nuevo
-                actualizarPresupuesto(gastoEditado.categoria, gastoEditado.monto, true)
+                actualizarPresupuesto(gastoEditado.categoriaNombre, gastoEditado.monto, true)
             } catch (e: Exception) {
-                // Manejar error
+                Log.e("GastoVM", "Error al editar gasto: ", e)
+
             }
         }
     }
@@ -69,18 +72,19 @@ class GastoViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 db.collection("gastos").document(uid).collection("mis_gastos").document(gasto.id).delete().await()
-                actualizarPresupuesto(gasto.categoria, gasto.monto, false)
+                actualizarPresupuesto(gasto.categoriaNombre, gasto.monto, false)
             } catch (e: Exception) {
-                // Manejar error
+                Log.e("GastoVM", "Error al eliminar gasto: ", e)
             }
         }
     }
 
-    private suspend fun actualizarPresupuesto(categoria: Categoria, monto: Double, esGasto: Boolean) {
+    private suspend fun actualizarPresupuesto(categoriaNombre: String, monto: Double, esGasto: Boolean) {
         try {
-            val snapshot = db.collection("presupuestos").document(uid)
+            val snapshot = db.collection("presupuestos")
+                .document(uid)
                 .collection("activos")
-                .whereEqualTo("categoria", categoria.id)
+                .whereEqualTo("categoriaNombre", categoriaNombre)
                 .get()
                 .await()
 
@@ -97,7 +101,7 @@ class GastoViewModel : ViewModel() {
                 transaction.update(doc.reference, "montoGastado", nuevoGastado)
             }.await()
         } catch (e: Exception) {
-            // Manejar error
+            Log.e("GastoVM", "Error actualizando presupuesto", e)
         }
     }
 }

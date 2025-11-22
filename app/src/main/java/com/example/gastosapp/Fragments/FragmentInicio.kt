@@ -94,7 +94,7 @@ class FragmentInicio : Fragment() {
             text = String.format("-$%.2f", gasto.monto)
             setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark))
         }
-        view.findViewById<TextView>(R.id.tvCategoriaGastoReciente).text = gasto.categoria.nombre
+        view.findViewById<TextView>(R.id.tvCategoriaGastoReciente).text = gasto.categoriaNombre
         view.findViewById<TextView>(R.id.tvFechaGastoReciente).text = sdf.format(gasto.fecha)
 
         return view

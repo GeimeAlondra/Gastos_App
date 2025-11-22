@@ -83,7 +83,8 @@ class FragmentAgregarGasto : DialogFragment() {
         binding.etNombreGasto.setText(gasto.nombre)
         binding.etCantidadGasto.setText(gasto.monto.toString())
         binding.etDescripcionGasto.setText(gasto.descripcion)
-        binding.etCategoriaGasto.setText(gasto.categoria.nombre, false)
+        binding.etCategoriaGasto.setText(gasto.categoriaNombre, false)  // ← String
+        calendar.time = gasto.fecha
         binding.etFechaGasto.text = sdf.format(gasto.fecha)
     }
 
@@ -91,19 +92,18 @@ class FragmentAgregarGasto : DialogFragment() {
         if (!validar()) return
 
         val nombreCat = binding.etCategoriaGasto.text.toString().trim()
-        val categoria = Categoria.fromNombre(nombreCat)
 
         val gasto = gastoAEditar?.copy(
             nombre = binding.etNombreGasto.text.toString().trim(),
             monto = binding.etCantidadGasto.text.toString().toDouble(),
             descripcion = binding.etDescripcionGasto.text.toString().trim().ifEmpty { "" },
-            categoria = categoria,
+            categoriaNombre = nombreCat,
             fecha = calendar.time
         ) ?: Gasto(
             nombre = binding.etNombreGasto.text.toString().trim(),
             monto = binding.etCantidadGasto.text.toString().toDouble(),
             descripcion = binding.etDescripcionGasto.text.toString().trim().ifEmpty { "" },
-            categoria = categoria,
+            categoriaNombre = nombreCat,
             fecha = calendar.time
         )
 
